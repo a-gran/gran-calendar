@@ -81,13 +81,13 @@
 Файл базы данных называется `calendar.db` и хранится в пользовательской директории:
 
 ```text
-~/.local/share/calendar-planner/calendar.db
+~/.local/share/gran-calendar/calendar.db
 ```
 
 Если задана переменная окружения `XDG_DATA_HOME`, приложение использует путь:
 
 ```text
-$XDG_DATA_HOME/calendar-planner/calendar.db
+$XDG_DATA_HOME/gran-calendar/calendar.db
 ```
 
 Старый файл `calendar.db` из корня проекта автоматически переносится в новое место при первом запуске,

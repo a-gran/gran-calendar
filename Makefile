@@ -1,32 +1,35 @@
 UV_CACHE_DIR ?= /tmp/uv-cache
 QT_QPA_PLATFORM ?= offscreen
-APP_NAME ?= CalendarPlanner
-APP_ID ?= calendar-planner
-APP_VERSION ?= $(shell UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
+APP_NAME ?= gran-calendar
+APP_ID ?= gran-calendar
 INSTALL_DIR ?= $(HOME)/.local/opt/$(APP_ID)
 DESKTOP_DIR ?= $(HOME)/.local/share/applications
 DESKTOP_FILE ?= $(DESKTOP_DIR)/$(APP_ID).desktop
 ICON_DIR ?= $(HOME)/.local/share/icons/hicolor/scalable/apps
 ICON_FILE ?= $(ICON_DIR)/$(APP_ID).svg
 
-.PHONY: check lint format-check test py-compile build-app install-local uninstall-local clean-build
+.PHONY: check lint format-check test py-compile build-app bump-install-version install-local uninstall-local clean-build
 
 check: lint format-check test
 
 build-app:
-	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run --with pyinstaller pyinstaller --noconfirm --clean packaging/CalendarPlanner.spec
+	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run --with pyinstaller pyinstaller --noconfirm --clean packaging/gran-calendar.spec
 
-install-local: build-app
+bump-install-version:
+	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python tools/bump_install_version.py
+
+install-local: bump-install-version
+	$(MAKE) build-app
 	install -d "$(INSTALL_DIR)" "$(DESKTOP_DIR)" "$(ICON_DIR)"
 	rm -rf "$(INSTALL_DIR)"
 	install -d "$(INSTALL_DIR)"
 	cp -a "dist/$(APP_NAME)/." "$(INSTALL_DIR)/"
-	printf '%s\n' "$(APP_VERSION)" > "$(INSTALL_DIR)/VERSION"
+	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])" > "$(INSTALL_DIR)/VERSION"
 	install -m 0644 "packaging/$(APP_ID).svg" "$(ICON_FILE)"
 	{ \
 		printf '%s\n' '[Desktop Entry]'; \
 		printf '%s\n' 'Type=Application'; \
-		printf '%s\n' 'Name=Calendar Planner'; \
+		printf '%s\n' 'Name=gran-calendar'; \
 		printf '%s\n' 'Comment=Личный календарный планировщик'; \
 		printf '%s\n' 'Exec=$(INSTALL_DIR)/$(APP_NAME)'; \
 		printf '%s\n' 'Icon=$(ICON_FILE)'; \
@@ -56,4 +59,4 @@ test:
 	QT_QPA_PLATFORM=$(QT_QPA_PLATFORM) UV_CACHE_DIR=$(UV_CACHE_DIR) uv run pytest
 
 py-compile:
-	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python -m py_compile main.py domain/__init__.py domain/clock.py domain/event.py domain/event_factory.py domain/event_index.py domain/event_limits.py domain/event_status.py domain/event_update.py domain/history_manager.py services/__init__.py services/event_service.py storage/__init__.py storage/event_storage.py ui/__init__.py ui/calendar_window.py ui/calendar_grid.py
+	UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python -m py_compile main.py domain/__init__.py domain/clock.py domain/event.py domain/event_factory.py domain/event_index.py domain/event_limits.py domain/event_status.py domain/event_update.py domain/history_manager.py services/__init__.py services/event_service.py storage/__init__.py storage/event_storage.py ui/__init__.py ui/calendar_window.py ui/calendar_grid.py tools/bump_install_version.py

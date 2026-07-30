@@ -31,8 +31,8 @@ class CalendarWindow(
 ):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Calendar Planner")
-        self.resize(1400, 900)
+        self.setWindowTitle("gran-calendar")
+        self.resize(1600, 900)
         initialize_calendar_window_state(self, DATABASE_PATH)
         initialize_calendar_window_widgets(self)
         self.calendar_scroll_area.setWidgetResizable(True)

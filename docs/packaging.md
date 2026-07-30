@@ -1,6 +1,6 @@
 # Упаковка и локальная установка
 
-Этот документ описывает, как собрать Calendar Planner и установить его как desktop-приложение
+Этот документ описывает, как собрать gran-calendar и установить его как desktop-приложение
 для текущего пользователя в Kali.
 
 ## Главная идея
@@ -10,16 +10,16 @@
 Установленная программа:
 
 ```text
-~/.local/opt/calendar-planner/
+~/.local/opt/gran-calendar/
 ```
 
 Пользовательские события:
 
 ```text
-~/.local/share/calendar-planner/calendar.db
+~/.local/share/gran-calendar/calendar.db
 ```
 
-При обновлении программы папка `~/.local/opt/calendar-planner/` пересоздается.
+При обновлении программы папка `~/.local/opt/gran-calendar/` пересоздается.
 База `calendar.db` при этом не удаляется и не перезаписывается.
 
 ## Собрать приложение
@@ -31,18 +31,12 @@ make build-app
 Сборка создается в папке:
 
 ```text
-dist/CalendarPlanner/
+dist/gran-calendar/
 ```
 
 В сборку не нужно добавлять `calendar.db`, тесты, документацию и служебные папки проекта.
 
 ## Установить или обновить приложение
-
-Перед новой сборкой обновите версию в `pyproject.toml`:
-
-```toml
-version = "0.1.1"
-```
 
 ```bash
 make install-local
@@ -50,20 +44,26 @@ make install-local
 
 Команда:
 
+- увеличивает patch-часть версии в `pyproject.toml` и `uv.lock`;
 - собирает приложение;
-- копирует новую версию в `~/.local/opt/calendar-planner/`;
-- записывает версию в `~/.local/opt/calendar-planner/VERSION`;
+- копирует новую версию в `~/.local/opt/gran-calendar/`;
+- записывает версию в `~/.local/opt/gran-calendar/VERSION`;
 - устанавливает иконку;
-- создает desktop-ярлык `~/.local/share/applications/calendar-planner.desktop`.
+- создает desktop-ярлык `~/.local/share/applications/gran-calendar.desktop`.
 
 Версия также показывается в заголовке окна приложения.
+
+Версия увеличивается автоматически при каждой установке:
+
+- `1.0.2` становится `1.0.3`;
+- `1.0.99` становится `1.1.0`.
 
 После этого приложение можно запускать из меню рабочего стола или через desktop-ярлык.
 
 ## Проверить установленный файл
 
 ```bash
-~/.local/opt/calendar-planner/CalendarPlanner
+~/.local/opt/gran-calendar/gran-calendar
 ```
 
 ## Удалить установленную программу
@@ -73,14 +73,14 @@ make uninstall-local
 ```
 
 Команда удаляет установленную программу, desktop-ярлык и иконку.
-Файл `~/.local/share/calendar-planner/calendar.db` не удаляется.
+Файл `~/.local/share/gran-calendar/calendar.db` не удаляется.
 
 ## Где остаются события
 
 События сохраняются в:
 
 ```text
-~/.local/share/calendar-planner/calendar.db
+~/.local/share/gran-calendar/calendar.db
 ```
 
 Этот файл не входит в сборку и не должен удаляться при обновлении установленной программы.

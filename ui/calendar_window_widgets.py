@@ -19,9 +19,10 @@ from ui.year_selector import YearSelector
 
 def initialize_calendar_window_widgets(window):
     window.week_label = QLabel()
-    window.previous_week_button = QPushButton("Previous Week")
-    window.current_week_button = QPushButton("Current Week")
-    window.next_week_button = QPushButton("Next Week")
+    window.week_label.setStyleSheet("font-size: 20px; font-weight: bold;")
+    window.previous_week_button = QPushButton("Previous")
+    window.current_week_button = QPushButton("Current")
+    window.next_week_button = QPushButton("Next")
     window.settings_button = QPushButton("⚙")
     window.settings_button.setFixedSize(32, 32)
     window.settings_button.setToolTip("Settings")

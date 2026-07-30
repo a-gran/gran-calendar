@@ -8,7 +8,7 @@ from storage.event_storage import EventStorage, get_database_path
 def test_default_database_path_uses_xdg_data_home(tmp_path, monkeypatch):
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
 
-    assert get_database_path() == tmp_path / "calendar-planner" / "calendar.db"
+    assert get_database_path() == tmp_path / "gran-calendar" / "calendar.db"
 
 
 def test_storage_creates_database_directory(tmp_path):

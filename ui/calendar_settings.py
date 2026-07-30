@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QSpinBox, QVBoxLayout
+from PySide6.QtWidgets import QCheckBox, QDialog, QDialogButtonBox, QFormLayout, QSpinBox, QVBoxLayout
 
 from ui.calendar_styles import application_style, details_message_style, details_panel_style, details_time_style
 
@@ -8,11 +8,6 @@ class CalendarSettingsMixin:
         dialog = QDialog(self)
         dialog.setWindowTitle("Settings")
         dialog.setModal(True)
-
-        theme_input = QComboBox()
-        theme_input.addItem("Dark", "dark")
-        theme_input.addItem("Light", "light")
-        theme_input.setCurrentIndex(max(0, theme_input.findData(self.visual_settings["theme"])))
 
         slot_height_input = QSpinBox()
         slot_height_input.setRange(30, 64)
@@ -53,7 +48,6 @@ class CalendarSettingsMixin:
         note_markers_input.setChecked(self.visual_settings["show_note_markers"])
 
         form_layout = QFormLayout()
-        form_layout.addRow("Theme", theme_input)
         form_layout.addRow("Calendar row height", slot_height_input)
         form_layout.addRow("Right panel width", details_width_input)
         form_layout.addRow("Time font size", time_font_input)
@@ -76,7 +70,7 @@ class CalendarSettingsMixin:
             return
 
         self.visual_settings = {
-            "theme": theme_input.currentData(),
+            "theme": self.visual_settings["theme"],
             "slot_height": slot_height_input.value(),
             "details_panel_width": details_width_input.value(),
             "time_font_size": time_font_input.value(),

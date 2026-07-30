@@ -7,7 +7,8 @@ from pathlib import Path
 from domain.event import Event
 from domain.event_status import EVENT_STATUS_NORMAL
 
-APPLICATION_DIRECTORY_NAME = "calendar-planner"
+APPLICATION_DIRECTORY_NAME = "gran-calendar"
+LEGACY_APPLICATION_DIRECTORY_NAME = "calendar-planner"
 DATABASE_FILE_NAME = "calendar.db"
 LEGACY_DATABASE_PATH = Path(__file__).resolve().parent.parent / DATABASE_FILE_NAME
 
@@ -19,11 +20,19 @@ def get_application_data_directory():
     return Path.home() / ".local" / "share" / APPLICATION_DIRECTORY_NAME
 
 
+def get_legacy_application_data_directory():
+    xdg_data_home = environ.get("XDG_DATA_HOME")
+    if xdg_data_home:
+        return Path(xdg_data_home).expanduser() / LEGACY_APPLICATION_DIRECTORY_NAME
+    return Path.home() / ".local" / "share" / LEGACY_APPLICATION_DIRECTORY_NAME
+
+
 def get_database_path():
     return get_application_data_directory() / DATABASE_FILE_NAME
 
 
 DATABASE_PATH = get_database_path()
+LEGACY_APPLICATION_DATABASE_PATH = get_legacy_application_data_directory() / DATABASE_FILE_NAME
 
 
 def ensure_database_directory(database_path):
@@ -43,9 +52,11 @@ class EventStorage:
     def __init__(self, database_path, legacy_database_path=None):
         self.database_path = Path(database_path).expanduser()
         if legacy_database_path is None and self.database_path == DATABASE_PATH:
-            legacy_database_path = LEGACY_DATABASE_PATH
+            legacy_database_path = LEGACY_APPLICATION_DATABASE_PATH
         if legacy_database_path is not None:
             migrate_legacy_database(self.database_path, legacy_database_path)
+        if self.database_path == DATABASE_PATH:
+            migrate_legacy_database(self.database_path, LEGACY_DATABASE_PATH)
         ensure_database_directory(self.database_path)
         self.initialize_database()
 

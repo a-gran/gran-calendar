@@ -7,7 +7,7 @@ a = Analysis(
     pathex=[str(project_root)],
     binaries=[],
     datas=[
-        (str(project_root / "packaging" / "calendar-planner.svg"), "packaging"),
+        (str(project_root / "packaging" / "gran-calendar.svg"), "packaging"),
         (str(project_root / "pyproject.toml"), "."),
     ],
     hiddenimports=[],
@@ -28,7 +28,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="CalendarPlanner",
+    name="gran-calendar",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -47,5 +47,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="CalendarPlanner",
+    name="gran-calendar",
 )

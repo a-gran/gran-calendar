@@ -58,7 +58,7 @@ def test_window_syncs_calendar_header_week(qt_app, tmp_path, monkeypatch):
 def test_window_uses_large_start_size(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
-    assert window.width() == 1400
+    assert window.width() == 1600
     assert window.height() == 900
 
 

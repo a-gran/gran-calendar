@@ -1,5 +1,6 @@
 import sys
 import tomllib
+from os import environ
 from pathlib import Path
 
 from PySide6.QtGui import QFont, QIcon
@@ -7,10 +8,18 @@ from PySide6.QtWidgets import QApplication
 
 from ui.calendar_window import CalendarWindow
 
-APPLICATION_ID = "calendar-planner"
-APPLICATION_NAME = "Calendar Planner"
-ICON_PATH = Path(__file__).resolve().parent / "packaging" / "calendar-planner.svg"
+APPLICATION_ID = "gran-calendar"
+APPLICATION_NAME = "gran-calendar"
+ICON_PATH = Path(__file__).resolve().parent / "packaging" / "gran-calendar.svg"
 PROJECT_METADATA_PATH = Path(__file__).resolve().parent / "pyproject.toml"
+
+
+def application_desktop_file_exists():
+    desktop_file_name = f"{APPLICATION_ID}.desktop"
+    data_dirs = [Path.home() / ".local" / "share"]
+    xdg_data_dirs = environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share")
+    data_dirs.extend(Path(path) for path in xdg_data_dirs.split(":") if path)
+    return any((data_dir / "applications" / desktop_file_name).exists() for data_dir in data_dirs)
 
 
 def get_application_version():
@@ -24,7 +33,8 @@ def get_application_version():
 def apply_application_metadata(app):
     app.setApplicationName(APPLICATION_NAME)
     app.setApplicationVersion(get_application_version())
-    app.setDesktopFileName(APPLICATION_ID)
+    if application_desktop_file_exists():
+        app.setDesktopFileName(APPLICATION_ID)
     if ICON_PATH.exists():
         app.setWindowIcon(QIcon(str(ICON_PATH)))
 

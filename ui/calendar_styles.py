@@ -79,6 +79,8 @@ DETAILS_MESSAGE_STYLE = details_message_style("dark")
 def details_time_style(pixel_size, theme_name="dark"):
     colors = theme_colors(theme_name)
     return f"color: {colors['text']}; font-family: sans-serif; font-size: {pixel_size}px; font-weight: bold;"
+
+
 OVERVIEW_EVENT_ROW_STYLE = (
     "QWidget { background: transparent; border: none; }"
     "QLabel { color: #e5e7eb; border: none; font-size: 16px; }"
@@ -101,6 +103,6 @@ YEAR_SELECTOR_STYLE = (
     "font-size: 12px; font-weight: bold; padding: 0; }"
     "QPushButton:hover { background: #334155; }"
 )
-MONTH_CALENDAR_BUTTON_TEXT = "Month Calendar"
-WEEK_CALENDAR_BUTTON_TEXT = "Week Calendar"
+MONTH_CALENDAR_BUTTON_TEXT = "Month"
+WEEK_CALENDAR_BUTTON_TEXT = "Week"
 MONTH_OVERVIEW_CALENDAR_HEIGHT = 430

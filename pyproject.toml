@@ -1,6 +1,6 @@
 [project]
-name = "calendar"
-version = "1.0.0"
+name = "gran-calendar"
+version = "1.0.2"
 requires-python = ">=3.12"
 dependencies = [
     "pyside6>=6.7",

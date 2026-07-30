@@ -1,4 +1,4 @@
-# Calendar Planner
+# gran-calendar
 
 Desktop-приложение для личного планирования в форме календаря.
 

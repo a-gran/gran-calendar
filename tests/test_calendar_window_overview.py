@@ -13,7 +13,7 @@ def test_window_toggles_month_overview(qt_app, tmp_path, monkeypatch):
 
     assert window.calendar_view_stack.currentWidget() == window.month_overview
     assert window.details_view_stack.currentWidget() == window.month_day_details
-    assert window.overview_toggle_button.text() == "Week Calendar"
+    assert window.overview_toggle_button.text() == "Week"
     assert isinstance(window.month_calendar, MonthOnlyCalendarWidget)
     assert window.month_calendar.height() == MONTH_OVERVIEW_CALENDAR_HEIGHT
     assert window.month_calendar.locale().language() == QLocale.English
@@ -30,7 +30,7 @@ def test_window_toggles_month_overview(qt_app, tmp_path, monkeypatch):
 
     assert window.calendar_view_stack.currentWidget() == window.week_view
     assert window.details_view_stack.currentWidget() == window.event_details_form
-    assert window.overview_toggle_button.text() == "Month Calendar"
+    assert window.overview_toggle_button.text() == "Month"
     assert window.previous_week_button.isEnabled()
     assert window.current_week_button.isEnabled()
     assert window.next_week_button.isEnabled()

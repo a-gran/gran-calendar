@@ -1,26 +1,40 @@
 from datetime import date, datetime, time, timedelta
 
-from PySide6.QtWidgets import QHBoxLayout
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QWidget
 
 from domain.event_index import sort_events
 
 
 class CalendarWeekMixin:
     def setup_week_navigation(self, parent_layout):
-        navigation_layout = QHBoxLayout()
+        navigation_layout = QGridLayout()
+        left_navigation = QWidget()
+        left_navigation_layout = QHBoxLayout()
+        left_navigation_layout.setContentsMargins(0, 0, 0, 0)
+        left_navigation_layout.addWidget(self.previous_week_button)
+        left_navigation_layout.addWidget(self.current_week_button)
+        left_navigation_layout.addWidget(self.next_week_button)
+        left_navigation_layout.addStretch()
+        left_navigation.setLayout(left_navigation_layout)
+        right_navigation = QWidget()
+        right_navigation_layout = QHBoxLayout()
+        right_navigation_layout.setContentsMargins(0, 0, 0, 0)
+        right_navigation_layout.addStretch()
+        right_navigation_layout.addWidget(self.overview_toggle_button)
+        right_navigation_layout.addWidget(self.settings_button)
+        right_navigation.setLayout(right_navigation_layout)
         self.previous_week_button.clicked.connect(self.show_previous_week)
         self.current_week_button.clicked.connect(self.show_current_week)
         self.next_week_button.clicked.connect(self.show_next_week)
         self.settings_button.clicked.connect(self.open_visual_settings_dialog)
         self.overview_toggle_button.clicked.connect(self.toggle_calendar_overview)
-        navigation_layout.addWidget(self.previous_week_button)
-        navigation_layout.addWidget(self.week_label)
-        navigation_layout.addStretch()
-        navigation_layout.addWidget(self.overview_toggle_button)
-        navigation_layout.addWidget(self.current_week_button)
-        navigation_layout.addWidget(self.next_week_button)
-        navigation_layout.addStretch()
-        navigation_layout.addWidget(self.settings_button)
+        navigation_layout.addWidget(left_navigation, 0, 0)
+        navigation_layout.addWidget(self.week_label, 0, 1, alignment=Qt.AlignCenter)
+        navigation_layout.addWidget(right_navigation, 0, 2)
+        navigation_layout.setColumnStretch(0, 1)
+        navigation_layout.setColumnStretch(1, 1)
+        navigation_layout.setColumnStretch(2, 1)
         parent_layout.addLayout(navigation_layout)
         self.update_week_label()
 
