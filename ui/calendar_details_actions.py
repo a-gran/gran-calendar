@@ -7,17 +7,6 @@ from domain.event_status import EVENT_STATUS_DONE
 
 
 class CalendarDetailsActionsMixin:
-    def delete_selected_event_from_details(self):
-        if self.selected_event is None:
-            self.show_status_message("Select an event to delete.", 3000)
-            return
-        event = self.find_event_by_id(self.events, self.selected_event.id)
-        if event is None:
-            self.show_status_message("Selected event was already deleted.", 3000)
-            self.select_event(None)
-            return
-        self.delete_event_with_undo(event)
-
     def limit_event_details_note(self):
         if self.is_updating_event_details:
             return

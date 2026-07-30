@@ -11,6 +11,7 @@ class CalendarWeekMixin:
         self.previous_week_button.clicked.connect(self.show_previous_week)
         self.current_week_button.clicked.connect(self.show_current_week)
         self.next_week_button.clicked.connect(self.show_next_week)
+        self.settings_button.clicked.connect(self.open_visual_settings_dialog)
         self.overview_toggle_button.clicked.connect(self.toggle_calendar_overview)
         navigation_layout.addWidget(self.previous_week_button)
         navigation_layout.addWidget(self.week_label)
@@ -18,6 +19,8 @@ class CalendarWeekMixin:
         navigation_layout.addWidget(self.overview_toggle_button)
         navigation_layout.addWidget(self.current_week_button)
         navigation_layout.addWidget(self.next_week_button)
+        navigation_layout.addStretch()
+        navigation_layout.addWidget(self.settings_button)
         parent_layout.addLayout(navigation_layout)
         self.update_week_label()
 

@@ -22,3 +22,14 @@ def initialize_calendar_window_state(window, database_path):
     window.overview_details_scope = "day"
     window.deleted_overview_events = {}
     window.is_updating_event_details = False
+    window.visual_settings = {
+        "theme": "dark",
+        "slot_height": 36,
+        "details_panel_width": 400,
+        "time_font_size": 20,
+        "event_title_font_size": 16,
+        "time_axis_font_size": 16,
+        "selected_border_width": 3,
+        "note_marker_size": 18,
+        "show_note_markers": True,
+    }

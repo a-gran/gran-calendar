@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QMouseEvent
 
+from domain.event_limits import MAX_EVENT_TITLE_LENGTH
 from domain.event_status import EVENT_STATUS_DONE, EVENT_STATUS_IMPORTANT, EVENT_STATUS_KAIROS
 from tests.calendar_window_helpers import make_window, mouse_event
 
@@ -207,25 +208,16 @@ def test_window_creates_events_from_selected_slot_list_details(qt_app, tmp_path,
     assert window.calendar_grid.selected_event_ids_list() == [window.events[-1].id]
 
 
-def test_window_deletes_selected_event_from_details_panel(qt_app, tmp_path, monkeypatch, make_event):
-    window = make_window(qt_app, tmp_path, monkeypatch)
-    start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=11)
-    event = make_event(event_id="panel-delete", start_at=start_at)
-
-    window.events = [event]
-    window.refresh_calendar()
-    window.select_event(event)
-    window.event_details_delete_button.click()
-
-    assert window.events == []
-    assert window.event_details_message.text() == ""
-
-    window.undo_last_action()
-
-    assert len(window.events) == 1
-
-
-def test_window_disables_details_delete_button_for_creation(qt_app, tmp_path, monkeypatch):
+def test_window_has_no_details_delete_button(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
-    assert not window.event_details_delete_button.isEnabled()
+    assert not hasattr(window, "event_details_delete_button")
+
+
+def test_window_limits_details_title_to_max_length(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+
+    window.event_details_title.setText("X" * (MAX_EVENT_TITLE_LENGTH + 5))
+
+    assert len(window.event_details_title.text()) == MAX_EVENT_TITLE_LENGTH
+    assert MAX_EVENT_TITLE_LENGTH == 50

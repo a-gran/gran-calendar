@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 )
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
-from ui.calendar_styles import OVERVIEW_EVENT_ROW_STYLE
+from ui.calendar_styles import OVERVIEW_EVENT_ROW_STYLE, theme_colors
 
 
 class MultilineTitleEdit(QPlainTextEdit):
@@ -120,10 +120,15 @@ class MonthOnlyCalendarWidget(QCalendarWidget):
         super().__init__()
         self.visible_year = date.today().year
         self.visible_month = date.today().month
+        self.theme_colors = theme_colors("dark")
 
     def set_visible_month(self, selected_date):
         self.visible_year = selected_date.year
         self.visible_month = selected_date.month
+        self.updateCells()
+
+    def set_theme(self, theme_name):
+        self.theme_colors = theme_colors(theme_name)
         self.updateCells()
 
     def paintCell(self, painter, rect, qdate):
@@ -131,7 +136,7 @@ class MonthOnlyCalendarWidget(QCalendarWidget):
             super().paintCell(painter, rect, qdate)
             return
         painter.save()
-        painter.fillRect(rect, QColor("#111827"))
-        painter.setPen(QPen(QColor("#1f2937")))
+        painter.fillRect(rect, QColor(self.theme_colors["field_background"]))
+        painter.setPen(QPen(QColor(self.theme_colors["grid_half_line"])))
         painter.drawRect(rect.adjusted(0, 0, -1, -1))
         painter.restore()

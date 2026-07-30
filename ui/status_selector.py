@@ -7,6 +7,7 @@ from domain.event_status import (
     EVENT_STATUS_NORMAL,
     EVENT_STATUS_TEXT_COLORS,
 )
+from ui.calendar_styles import theme_colors
 
 
 class StatusSelector(QWidget):
@@ -15,6 +16,7 @@ class StatusSelector(QWidget):
     def __init__(self):
         super().__init__()
         self.statuses = list(EVENT_STATUS_LABELS.items())
+        self.theme_colors = theme_colors("dark")
         self.buttons = {}
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
@@ -38,15 +40,26 @@ class StatusSelector(QWidget):
         self.status_changed.emit(self.statuses[button_id][0])
 
     def button_style(self, status):
-        background_color = EVENT_STATUS_COLORS.get(status, EVENT_STATUS_COLORS[EVENT_STATUS_NORMAL])
-        text_color = EVENT_STATUS_TEXT_COLORS.get(status, "#ffffff")
+        if status == EVENT_STATUS_NORMAL:
+            background_color = self.theme_colors["normal_event_background"]
+            text_color = self.theme_colors["normal_event_text"]
+        else:
+            background_color = EVENT_STATUS_COLORS.get(status, EVENT_STATUS_COLORS[EVENT_STATUS_NORMAL])
+            text_color = EVENT_STATUS_TEXT_COLORS.get(status, self.theme_colors["text"])
         return (
             f"QPushButton {{ background-color: {background_color}; color: {text_color}; "
-            "border: 1px solid #475569; border-radius: 4px; padding: 5px 8px; "
+            f"border: 1px solid {self.theme_colors['button_border']}; border-radius: 4px; padding: 5px 8px; "
             "font-size: 14px; font-weight: bold; }"
-            "QPushButton:checked { border: 2px solid #ffffff; padding: 4px 7px; }"
-            "QPushButton:disabled { background-color: #111827; color: #64748b; border: 1px solid #1e293b; }"
+            f"QPushButton:checked {{ border: 2px solid {self.theme_colors['selected_event_border']}; "
+            "padding: 4px 7px; }"
+            f"QPushButton:disabled {{ background-color: {self.theme_colors['disabled_background']}; "
+            f"color: {self.theme_colors['disabled_text']}; border: 1px solid {self.theme_colors['grid_half_line']}; }}"
         )
+
+    def set_theme(self, theme_name):
+        self.theme_colors = theme_colors(theme_name)
+        for status, button in self.buttons.items():
+            button.setStyleSheet(self.button_style(status))
 
     def findData(self, status):
         for index, (candidate_status, _label) in enumerate(self.statuses):

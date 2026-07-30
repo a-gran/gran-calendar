@@ -8,6 +8,7 @@ from ui.calendar_grid_geometry import CalendarGridGeometryMixin
 from ui.calendar_grid_mouse import CalendarGridMouseMixin
 from ui.calendar_grid_painting import CalendarGridPaintingMixin
 from ui.calendar_grid_selection import CalendarGridSelectionMixin
+from ui.calendar_styles import theme_colors
 
 
 class CalendarGridWidget(
@@ -36,6 +37,12 @@ class CalendarGridWidget(
         self.time_axis_width = 72
         self.header_height = 0
         self.slot_height = 36
+        self.time_axis_pixel_size = 16
+        self.event_time_pixel_size = 20
+        self.event_title_pixel_size = 16
+        self.note_marker_size = 18
+        self.show_note_markers = True
+        self.theme_colors = theme_colors("dark")
         self.event_text_vertical_padding = 12
         self.event_padding = 4
         self.selected_border_width = 3
@@ -75,6 +82,29 @@ class CalendarGridWidget(
         self.minimum_height_value = 0
         self.setMouseTracking(True)
         self.update_minimum_height()
+
+    def apply_visual_settings(
+        self,
+        slot_height,
+        time_font_size,
+        event_title_font_size,
+        time_axis_font_size,
+        selected_border_width,
+        note_marker_size,
+        show_note_markers,
+        theme_name,
+    ):
+        self.slot_height = slot_height
+        self.time_axis_pixel_size = time_axis_font_size
+        self.event_time_pixel_size = time_font_size
+        self.event_title_pixel_size = event_title_font_size
+        self.selected_border_width = selected_border_width
+        self.note_marker_size = note_marker_size
+        self.show_note_markers = show_note_markers
+        self.theme_colors = theme_colors(theme_name)
+        self.invalidate_slot_cache()
+        self.update_minimum_height()
+        self.update()
 
     def set_week_start(self, week_start):
         self.week_start = week_start

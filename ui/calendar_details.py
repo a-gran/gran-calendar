@@ -1,9 +1,14 @@
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QAbstractItemView, QHBoxLayout, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QAbstractItemView, QLabel, QVBoxLayout
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
 from domain.event_status import EVENT_STATUS_NORMAL
-from ui.calendar_styles import DETAILS_LABEL_STYLE, DETAILS_MESSAGE_STYLE, DETAILS_PANEL_STYLE
+from ui.calendar_styles import (
+    DETAILS_MESSAGE_STYLE,
+    DETAILS_PANEL_STYLE,
+    details_label_style,
+    details_time_style,
+)
 
 
 class CalendarDetailsMixin:
@@ -20,15 +25,17 @@ class CalendarDetailsMixin:
 
     def setup_event_details_form(self):
         self.event_details_title.setMaxLength(MAX_EVENT_TITLE_LENGTH)
-        self.event_details_title.setFixedHeight(78)
+        self.event_details_title.setFixedHeight(58)
         self.event_details_title.textChanged.connect(self.limit_event_details_title)
         self.event_details_time.setWordWrap(True)
+        self.event_details_time.setStyleSheet(
+            details_time_style(self.visual_settings["time_font_size"], self.visual_settings["theme"])
+        )
         self.event_details_note.textChanged.connect(self.limit_event_details_note)
         self.event_details_message.setWordWrap(True)
         self.event_details_message.setStyleSheet(DETAILS_MESSAGE_STYLE)
         self.event_details_message.hide()
         self.event_details_save_button.clicked.connect(self.save_event_details)
-        self.event_details_delete_button.clicked.connect(self.delete_selected_event_from_details)
         self.event_details_status.status_changed.connect(self.apply_event_details_status)
         form_layout = QVBoxLayout()
         form_layout.setContentsMargins(0, 0, 0, 0)
@@ -42,12 +49,7 @@ class CalendarDetailsMixin:
         form_layout.addWidget(self.detail_caption("Note"))
         form_layout.addWidget(self.event_details_note, 1)
         form_layout.addWidget(self.event_details_message)
-        action_layout = QHBoxLayout()
-        action_layout.setContentsMargins(0, 0, 0, 0)
-        action_layout.setSpacing(8)
-        action_layout.addWidget(self.event_details_save_button)
-        action_layout.addWidget(self.event_details_delete_button)
-        form_layout.addLayout(action_layout)
+        form_layout.addWidget(self.event_details_save_button)
         self.event_details_form.setLayout(form_layout)
         self.details_view_stack.addWidget(self.event_details_form)
 
@@ -79,7 +81,7 @@ class CalendarDetailsMixin:
 
     def detail_caption(self, text):
         label = QLabel(text)
-        label.setStyleSheet(DETAILS_LABEL_STYLE)
+        label.setStyleSheet(details_label_style(self.visual_settings["theme"]))
         return label
 
     def update_event_details_panel(self):
@@ -106,7 +108,6 @@ class CalendarDetailsMixin:
         self.event_details_note.setPlainText(current_event.note)
         self.set_event_details_enabled(True)
         self.event_details_save_button.setText("Save")
-        self.event_details_delete_button.setEnabled(True)
         self.event_details_panel.show()
         self.is_updating_event_details = False
 
@@ -118,7 +119,6 @@ class CalendarDetailsMixin:
             self.event_details_note.setPlainText("")
             self.set_event_details_enabled(False)
             self.event_details_save_button.setText("Create")
-            self.event_details_delete_button.setEnabled(False)
             self.event_details_panel.show()
             return
         start_at, end_at = self.selected_details_ranges[0]
@@ -131,7 +131,6 @@ class CalendarDetailsMixin:
         self.event_details_note.setPlainText("")
         self.set_event_details_enabled(True)
         self.event_details_save_button.setText("Create")
-        self.event_details_delete_button.setEnabled(False)
         self.event_details_panel.show()
 
     def set_event_details_enabled(self, is_enabled):

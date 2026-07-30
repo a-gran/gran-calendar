@@ -4,7 +4,7 @@ from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QColor, QFont, QPainter, QPen
 from PySide6.QtWidgets import QWidget
 
-from domain.event_status import CALENDAR_EMPTY_CELL_COLOR
+from ui.calendar_styles import theme_colors
 
 
 class CalendarHeaderWidget(QWidget):
@@ -16,6 +16,7 @@ class CalendarHeaderWidget(QWidget):
         self.header_height = 36
         self.right_padding = 0
         self.week_start = date.today() - timedelta(days=date.today().weekday())
+        self.theme_colors = theme_colors("dark")
         self.setFixedHeight(self.header_height)
 
     def calendar_font(self):
@@ -33,16 +34,20 @@ class CalendarHeaderWidget(QWidget):
         self.right_padding = right_padding
         self.update()
 
+    def set_theme(self, theme_name):
+        self.theme_colors = theme_colors(theme_name)
+        self.update()
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        painter.fillRect(self.rect(), QColor(CALENDAR_EMPTY_CELL_COLOR))
+        painter.fillRect(self.rect(), QColor(self.theme_colors["normal_event_background"]))
         painter.setFont(self.calendar_font())
         for day_index in range(7):
             column_rect = self.day_column_rect(day_index)
             current_day = self.week_start + timedelta(days=day_index)
             day_text = f"{self.day_names[day_index]} {current_day.strftime('%d.%m')}"
-            painter.setPen(QPen(QColor("#e5e7eb")))
+            painter.setPen(QPen(QColor(self.theme_colors["text"])))
             painter.drawText(column_rect, Qt.AlignCenter, day_text)
 
     def day_column_rect(self, day_index):

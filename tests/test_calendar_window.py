@@ -68,6 +68,44 @@ def test_window_uses_wide_details_panel(qt_app, tmp_path, monkeypatch):
     assert window.event_details_panel.width() == 400
 
 
+def test_window_has_small_settings_icon_button(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+
+    assert window.settings_button.text() == "⚙"
+    assert window.settings_button.width() == 32
+    assert window.settings_button.height() == 32
+    assert window.settings_button.toolTip() == "Settings"
+
+
+def test_window_applies_visual_settings(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+
+    window.visual_settings = {
+        "theme": "light",
+        "slot_height": 48,
+        "details_panel_width": 460,
+        "time_font_size": 28,
+        "event_title_font_size": 18,
+        "time_axis_font_size": 14,
+        "selected_border_width": 5,
+        "note_marker_size": 24,
+        "show_note_markers": False,
+    }
+    window.apply_visual_settings()
+
+    assert window.calendar_grid.slot_height == 48
+    assert window.calendar_grid.event_time_pixel_size == 28
+    assert window.calendar_grid.event_title_pixel_size == 18
+    assert window.calendar_grid.time_axis_pixel_size == 14
+    assert window.calendar_grid.selected_border_width == 5
+    assert window.calendar_grid.note_marker_size == 24
+    assert not window.calendar_grid.show_note_markers
+    assert window.calendar_grid.theme_colors["normal_event_background"] == "#ffffff"
+    assert window.calendar_header.theme_colors["normal_event_background"] == "#ffffff"
+    assert window.month_calendar.theme_colors["normal_event_background"] == "#ffffff"
+    assert window.event_details_panel.width() == 460
+
+
 def test_window_selects_first_slot_by_default(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
     start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=6)

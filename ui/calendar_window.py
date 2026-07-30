@@ -8,6 +8,7 @@ from ui.calendar_events import CalendarEventsMixin
 from ui.calendar_history import CalendarHistoryMixin
 from ui.calendar_overview import CalendarOverviewMixin
 from ui.calendar_overview_details import CalendarOverviewDetailsMixin
+from ui.calendar_settings import CalendarSettingsMixin
 from ui.calendar_shortcuts import setup_window_shortcuts
 from ui.calendar_week import CalendarWeekMixin
 from ui.calendar_window_connections import connect_calendar_window_signals
@@ -22,6 +23,7 @@ class CalendarWindow(
     CalendarDetailsActionsMixin,
     CalendarOverviewMixin,
     CalendarOverviewDetailsMixin,
+    CalendarSettingsMixin,
     CalendarHistoryMixin,
     CalendarEventsMixin,
     CalendarWeekMixin,

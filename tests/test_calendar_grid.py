@@ -60,3 +60,14 @@ def test_grid_reuses_slot_height_cache_until_invalidated(qt_app, make_event):
     grid.invalidate_slot_cache()
 
     assert grid.slot_heights() is not first_heights
+
+
+def test_grid_detects_events_with_notes(qt_app, make_event):
+    grid = CalendarGridWidget()
+    event_with_note = make_event(event_id="with-note")
+    event_without_note = make_event(event_id="without-note")
+    event_with_note.note = "Detailed comment"
+    event_without_note.note = "   "
+
+    assert grid.event_has_note(event_with_note)
+    assert not grid.event_has_note(event_without_note)

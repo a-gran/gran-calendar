@@ -56,14 +56,20 @@ class CalendarGridGeometryMixin:
         text_width = day_width - self.event_padding * 2 - 12
         if text_width <= 0:
             return self.slot_height
-        font_metrics = QFontMetrics(self.event_font(bold=EVENT_STATUS_TEXT_BOLD.get(event.status, False)))
+        time_height = QFontMetrics(self.event_time_font()).height()
+        font_metrics = QFontMetrics(
+            self.event_font(
+                bold=EVENT_STATUS_TEXT_BOLD.get(event.status, False),
+                pixel_size=self.event_title_pixel_size,
+            )
+        )
         measure_rect = QRect(0, 0, text_width, 2000)
         text_rect = font_metrics.boundingRect(
             measure_rect,
             Qt.AlignTop | Qt.AlignLeft | Qt.TextWordWrap,
-            self.format_event(event),
+            event.title,
         )
-        return max(self.slot_height, text_rect.height() + self.event_text_vertical_padding + 6)
+        return max(self.slot_height, time_height + text_rect.height() + self.event_text_vertical_padding + 8)
 
     def slot_index_for_datetime(self, value):
         minutes_from_start = (value.hour - self.day_start_hour) * 60 + value.minute
