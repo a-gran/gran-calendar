@@ -48,3 +48,4 @@ credentials.json
 token.json
 client_secret*.json
 oop_version/
+AGENTS.md

@@ -1,9 +1,21 @@
 import sys
+from pathlib import Path
 
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 from PySide6.QtWidgets import QApplication
 
 from ui.calendar_window import CalendarWindow
+
+APPLICATION_ID = "calendar-planner"
+APPLICATION_NAME = "Calendar Planner"
+ICON_PATH = Path(__file__).resolve().parent / "packaging" / "calendar-planner.svg"
+
+
+def apply_application_metadata(app):
+    app.setApplicationName(APPLICATION_NAME)
+    app.setDesktopFileName(APPLICATION_ID)
+    if ICON_PATH.exists():
+        app.setWindowIcon(QIcon(str(ICON_PATH)))
 
 
 def apply_dark_theme(app):
@@ -111,8 +123,11 @@ def apply_dark_theme(app):
 
 def main():
     app = QApplication(sys.argv)
+    apply_application_metadata(app)
     apply_dark_theme(app)
     window = CalendarWindow()
+    if not app.windowIcon().isNull():
+        window.setWindowIcon(app.windowIcon())
     window.show()
     sys.exit(app.exec())
 

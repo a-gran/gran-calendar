@@ -39,9 +39,18 @@ uv run python main.py
 make check
 ```
 
+## Установка как desktop-приложения
+
+```bash
+make install-local
+```
+
+Подробности описаны в [документации по упаковке](docs/packaging.md).
+
 ## Документация
 
 - [Инструкция по работе с приложением](docs/usage.md)
 - [Горячие клавиши](docs/hotkeys.md)
 - [Архитектура](docs/architecture.md)
+- [Упаковка и локальная установка](docs/packaging.md)
 - [Синхронизация через GitLab](docs/gitlab-sync.md)
