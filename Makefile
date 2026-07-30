@@ -2,6 +2,7 @@ UV_CACHE_DIR ?= /tmp/uv-cache
 QT_QPA_PLATFORM ?= offscreen
 APP_NAME ?= CalendarPlanner
 APP_ID ?= calendar-planner
+APP_VERSION ?= $(shell UV_CACHE_DIR=$(UV_CACHE_DIR) uv run python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
 INSTALL_DIR ?= $(HOME)/.local/opt/$(APP_ID)
 DESKTOP_DIR ?= $(HOME)/.local/share/applications
 DESKTOP_FILE ?= $(DESKTOP_DIR)/$(APP_ID).desktop
@@ -20,6 +21,7 @@ install-local: build-app
 	rm -rf "$(INSTALL_DIR)"
 	install -d "$(INSTALL_DIR)"
 	cp -a "dist/$(APP_NAME)/." "$(INSTALL_DIR)/"
+	printf '%s\n' "$(APP_VERSION)" > "$(INSTALL_DIR)/VERSION"
 	install -m 0644 "packaging/$(APP_ID).svg" "$(ICON_FILE)"
 	{ \
 		printf '%s\n' '[Desktop Entry]'; \

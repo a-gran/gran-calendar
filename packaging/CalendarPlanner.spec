@@ -8,6 +8,7 @@ a = Analysis(
     binaries=[],
     datas=[
         (str(project_root / "packaging" / "calendar-planner.svg"), "packaging"),
+        (str(project_root / "pyproject.toml"), "."),
     ],
     hiddenimports=[],
     hookspath=[],

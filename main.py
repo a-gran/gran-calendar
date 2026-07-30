@@ -1,4 +1,5 @@
 import sys
+import tomllib
 from pathlib import Path
 
 from PySide6.QtGui import QFont, QIcon
@@ -9,10 +10,20 @@ from ui.calendar_window import CalendarWindow
 APPLICATION_ID = "calendar-planner"
 APPLICATION_NAME = "Calendar Planner"
 ICON_PATH = Path(__file__).resolve().parent / "packaging" / "calendar-planner.svg"
+PROJECT_METADATA_PATH = Path(__file__).resolve().parent / "pyproject.toml"
+
+
+def get_application_version():
+    if not PROJECT_METADATA_PATH.exists():
+        return "0.0.0"
+    with PROJECT_METADATA_PATH.open("rb") as metadata_file:
+        metadata = tomllib.load(metadata_file)
+    return metadata["project"]["version"]
 
 
 def apply_application_metadata(app):
     app.setApplicationName(APPLICATION_NAME)
+    app.setApplicationVersion(get_application_version())
     app.setDesktopFileName(APPLICATION_ID)
     if ICON_PATH.exists():
         app.setWindowIcon(QIcon(str(ICON_PATH)))
@@ -126,6 +137,7 @@ def main():
     apply_application_metadata(app)
     apply_dark_theme(app)
     window = CalendarWindow()
+    window.setWindowTitle(f"{APPLICATION_NAME} {app.applicationVersion()}")
     if not app.windowIcon().isNull():
         window.setWindowIcon(app.windowIcon())
     window.show()

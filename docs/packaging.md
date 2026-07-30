@@ -38,6 +38,12 @@ dist/CalendarPlanner/
 
 ## Установить или обновить приложение
 
+Перед новой сборкой обновите версию в `pyproject.toml`:
+
+```toml
+version = "0.1.1"
+```
+
 ```bash
 make install-local
 ```
@@ -46,8 +52,11 @@ make install-local
 
 - собирает приложение;
 - копирует новую версию в `~/.local/opt/calendar-planner/`;
+- записывает версию в `~/.local/opt/calendar-planner/VERSION`;
 - устанавливает иконку;
 - создает desktop-ярлык `~/.local/share/applications/calendar-planner.desktop`.
+
+Версия также показывается в заголовке окна приложения.
 
 После этого приложение можно запускать из меню рабочего стола или через desktop-ярлык.
 
