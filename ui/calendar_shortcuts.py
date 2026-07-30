@@ -1,0 +1,26 @@
+from PySide6.QtGui import QKeySequence, QShortcut
+
+
+def setup_window_shortcuts(window):
+    undo_shortcut = QShortcut(QKeySequence("Ctrl+Z"), window)
+    undo_shortcut.activated.connect(window.undo_last_action)
+    redo_shortcut = QShortcut(QKeySequence("Ctrl+Y"), window)
+    redo_shortcut.activated.connect(window.redo_last_action)
+    copy_shortcut = QShortcut(QKeySequence("Ctrl+C"), window)
+    copy_shortcut.activated.connect(window.copy_keyboard_selection)
+    paste_shortcut = QShortcut(QKeySequence("Ctrl+V"), window)
+    paste_shortcut.activated.connect(window.paste_keyboard_selection)
+    cut_shortcut = QShortcut(QKeySequence("Ctrl+X"), window)
+    cut_shortcut.activated.connect(window.cut_keyboard_selection)
+    delete_shortcut = QShortcut(QKeySequence("Delete"), window)
+    delete_shortcut.activated.connect(window.delete_keyboard_selection)
+    escape_shortcut = QShortcut(QKeySequence("Esc"), window)
+    escape_shortcut.activated.connect(window.clear_all_selections)
+    previous_week_shortcut = QShortcut(QKeySequence("Ctrl+Left"), window)
+    previous_week_shortcut.activated.connect(window.show_previous_week)
+    next_week_shortcut = QShortcut(QKeySequence("Ctrl+Right"), window)
+    next_week_shortcut.activated.connect(window.show_next_week)
+    current_week_shortcut = QShortcut(QKeySequence("Ctrl+T"), window)
+    current_week_shortcut.activated.connect(window.show_current_week)
+    create_event_shortcut = QShortcut(QKeySequence("Ctrl+N"), window)
+    create_event_shortcut.activated.connect(window.add_event_to_selected_slot)
