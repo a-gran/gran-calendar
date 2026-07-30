@@ -1,5 +1,5 @@
-import sqlite3
 import shutil
+import sqlite3
 from datetime import datetime
 from os import environ
 from pathlib import Path
