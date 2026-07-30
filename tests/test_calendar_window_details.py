@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QMouseEvent
 
-from domain.event_status import EVENT_STATUS_IMPORTANT, EVENT_STATUS_KAIROS
+from domain.event_status import EVENT_STATUS_DONE, EVENT_STATUS_IMPORTANT, EVENT_STATUS_KAIROS
 from tests.calendar_window_helpers import make_window, mouse_event
 
 
@@ -60,6 +60,50 @@ def test_window_double_click_event_shows_side_panel_details(qt_app, tmp_path, mo
 
     assert window.selected_event.id == "double-details"
     assert window.event_details_title.text() == "Double Details"
+    assert event.status == EVENT_STATUS_DONE
+
+
+def test_window_status_button_updates_selected_event_immediately(qt_app, tmp_path, monkeypatch, make_event):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
+    event = make_event(event_id="status-immediate", start_at=start_at)
+    saved_events = []
+
+    window.storage.save_event = lambda saved_event: saved_events.append(saved_event)
+    window.events = [event]
+    window.refresh_calendar()
+    window.select_event(event)
+    window.event_details_status.buttons[EVENT_STATUS_KAIROS].click()
+
+    assert event.status == EVENT_STATUS_KAIROS
+    assert saved_events == [event]
+
+
+def test_window_status_button_updates_ctrl_selected_events(qt_app, tmp_path, monkeypatch, make_event):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    first_start = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
+    second_start = first_start + timedelta(hours=1)
+    first_event = make_event(event_id="first-status", start_at=first_start)
+    second_event = make_event(event_id="second-status", start_at=second_start)
+
+    window.events = [first_event, second_event]
+    window.refresh_calendar()
+    window.calendar_grid.selected_event_ids = {"first-status", "second-status"}
+    window.select_event(first_event)
+    window.event_details_status.buttons[EVENT_STATUS_KAIROS].click()
+
+    assert first_event.status == EVENT_STATUS_KAIROS
+    assert second_event.status == EVENT_STATUS_KAIROS
+
+    window.undo_last_action()
+
+    assert first_event.status != EVENT_STATUS_KAIROS
+    assert second_event.status != EVENT_STATUS_KAIROS
+
+    window.redo_last_action()
+
+    assert first_event.status == EVENT_STATUS_KAIROS
+    assert second_event.status == EVENT_STATUS_KAIROS
 
 
 def test_window_saves_event_details_with_undo_and_redo(qt_app, tmp_path, monkeypatch, make_event):

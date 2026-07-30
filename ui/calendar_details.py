@@ -29,6 +29,7 @@ class CalendarDetailsMixin:
         self.event_details_message.hide()
         self.event_details_save_button.clicked.connect(self.save_event_details)
         self.event_details_delete_button.clicked.connect(self.delete_selected_event_from_details)
+        self.event_details_status.status_changed.connect(self.apply_event_details_status)
         form_layout = QVBoxLayout()
         form_layout.setContentsMargins(0, 0, 0, 0)
         form_layout.setSpacing(10)

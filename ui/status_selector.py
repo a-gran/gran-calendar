@@ -1,3 +1,4 @@
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QButtonGroup, QHBoxLayout, QPushButton, QWidget
 
 from domain.event_status import (
@@ -9,6 +10,8 @@ from domain.event_status import (
 
 
 class StatusSelector(QWidget):
+    status_changed = Signal(str)
+
     def __init__(self):
         super().__init__()
         self.statuses = list(EVENT_STATUS_LABELS.items())
@@ -26,7 +29,13 @@ class StatusSelector(QWidget):
             self.buttons[status] = button
             layout.addWidget(button)
         self.setLayout(layout)
+        self.button_group.idClicked.connect(self.emit_status_changed)
         self.setCurrentStatus(EVENT_STATUS_NORMAL)
+
+    def emit_status_changed(self, button_id):
+        if button_id < 0 or button_id >= len(self.statuses):
+            return
+        self.status_changed.emit(self.statuses[button_id][0])
 
     def button_style(self, status):
         background_color = EVENT_STATUS_COLORS.get(status, EVENT_STATUS_COLORS[EVENT_STATUS_NORMAL])

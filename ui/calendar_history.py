@@ -66,6 +66,14 @@ class CalendarHistoryMixin:
         apply_event_snapshot(event, new_event)
         self.storage.save_event(event)
 
+    def restore_event_snapshots(self, event_snapshots):
+        for event_snapshot in event_snapshots:
+            event = self.find_event_by_id(self.events, event_snapshot.id)
+            if event is None:
+                continue
+            apply_event_snapshot(event, event_snapshot)
+            self.storage.save_event(event)
+
     def delete_event_with_undo(self, deleted_event):
         deleted_snapshot = replace(deleted_event)
         self.events = delete_event(self.events, self.storage, deleted_event)

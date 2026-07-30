@@ -22,6 +22,7 @@ class CalendarGridWidget(
     selection_created = Signal(datetime, datetime)
     selection_ranges_created = Signal(object)
     event_selected = Signal(object)
+    event_double_clicked = Signal(object)
     event_resized = Signal(object, datetime, datetime)
     event_moved = Signal(object, datetime, datetime)
     slot_double_clicked = Signal(datetime)

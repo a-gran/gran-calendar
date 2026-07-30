@@ -103,6 +103,7 @@ class CalendarGridMouseMixin:
             if clicked_event is not None:
                 self.set_selected_event_id(clicked_event.id)
                 self.event_selected.emit(clicked_event)
+                self.event_double_clicked.emit(clicked_event)
                 return
             slot_datetime = self.datetime_from_position(event.position().toPoint())
             if slot_datetime is not None:

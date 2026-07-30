@@ -3,6 +3,7 @@ from dataclasses import replace
 from domain.clock import current_datetime
 from domain.event_factory import create_event
 from domain.event_limits import MAX_EVENT_NOTE_LENGTH, MAX_EVENT_TITLE_LENGTH
+from domain.event_status import EVENT_STATUS_DONE
 
 
 class CalendarDetailsActionsMixin:
@@ -52,6 +53,48 @@ class CalendarDetailsActionsMixin:
             self.create_events_from_details_ranges()
             return
         self.update_selected_event_from_details()
+
+    def apply_event_details_status(self, status):
+        if self.is_updating_event_details:
+            return
+        if self.selected_event is None:
+            return
+        self.update_events_status(self.status_target_events(), status)
+
+    def mark_event_done_from_grid(self, event):
+        self.select_event(event)
+        current_event = self.find_event_by_id(self.events, event.id)
+        if current_event is None:
+            return
+        self.update_events_status([current_event], EVENT_STATUS_DONE)
+
+    def status_target_events(self):
+        selected_events = self.events_for_selected_event_ids()
+        if selected_events:
+            return selected_events
+        if self.selected_event is None:
+            return []
+        event = self.find_event_by_id(self.events, self.selected_event.id)
+        if event is None:
+            return []
+        return [event]
+
+    def update_events_status(self, events, status):
+        changed_events = [event for event in events if event.status != status]
+        if not changed_events:
+            return
+        old_events = [replace(event) for event in changed_events]
+        current_moment = current_datetime()
+        for event in changed_events:
+            event.status = status
+            event.updated_at = current_moment
+            self.storage.save_event(event)
+        new_events = [replace(event) for event in changed_events]
+        self.remember_undo(
+            lambda events=old_events: self.restore_event_snapshots(events),
+            lambda events=new_events: self.restore_event_snapshots(events),
+        )
+        self.refresh_calendar()
 
     def creation_details_date_text(self):
         dates = {start_at.date() for start_at, _end_at in self.selected_details_ranges}
