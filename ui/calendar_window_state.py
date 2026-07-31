@@ -25,7 +25,7 @@ def initialize_calendar_window_state(window, database_path):
     window.visual_settings = {
         "theme": "dark",
         "slot_height": 36,
-        "details_panel_width": 440,
+        "details_panel_width": 400,
         "time_font_size": 20,
         "event_title_font_size": 16,
         "time_axis_font_size": 16,

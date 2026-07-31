@@ -13,7 +13,7 @@ from ui.calendar_styles import (
 
 class CalendarDetailsMixin:
     def setup_event_details_panel(self):
-        self.event_details_panel.setFixedWidth(440)
+        self.event_details_panel.setFixedWidth(400)
         self.event_details_panel.setStyleSheet(DETAILS_PANEL_STYLE)
         self.month_day_open_button.clicked.connect(self.open_month_overview_day)
         self.setup_event_details_form()

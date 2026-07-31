@@ -66,7 +66,7 @@ def test_window_uses_large_start_size(qt_app, tmp_path, monkeypatch):
 def test_window_uses_wide_details_panel(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
-    assert window.event_details_panel.width() == 440
+    assert window.event_details_panel.width() == 400
 
 
 def test_window_has_small_settings_icon_button(qt_app, tmp_path, monkeypatch):
