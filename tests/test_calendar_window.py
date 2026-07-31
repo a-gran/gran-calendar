@@ -1,3 +1,4 @@
+import re
 from datetime import datetime, timedelta
 
 from tests.calendar_window_helpers import make_window
@@ -65,7 +66,7 @@ def test_window_uses_large_start_size(qt_app, tmp_path, monkeypatch):
 def test_window_uses_wide_details_panel(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
-    assert window.event_details_panel.width() == 400
+    assert window.event_details_panel.width() == 440
 
 
 def test_window_has_small_settings_icon_button(qt_app, tmp_path, monkeypatch):
@@ -75,6 +76,15 @@ def test_window_has_small_settings_icon_button(qt_app, tmp_path, monkeypatch):
     assert window.settings_button.width() == 32
     assert window.settings_button.height() == 32
     assert window.settings_button.toolTip() == "Settings"
+
+
+def test_window_header_has_live_24_hour_clock(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+
+    assert re.fullmatch(r"\d{2}:\d{2}:\d{2}", window.current_time_label.text())
+    assert "font-size: 32px" in window.current_time_label.styleSheet()
+    assert window.current_time_timer.isActive()
+    assert window.current_time_timer.interval() == 1000
 
 
 def test_window_applies_visual_settings(qt_app, tmp_path, monkeypatch):

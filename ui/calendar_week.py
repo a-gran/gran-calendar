@@ -1,6 +1,6 @@
 from datetime import date, datetime, time, timedelta
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTime, QTimer
 from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QWidget
 
 from domain.event_index import sort_events
@@ -37,6 +37,16 @@ class CalendarWeekMixin:
         navigation_layout.setColumnStretch(2, 1)
         parent_layout.addLayout(navigation_layout)
         self.update_week_label()
+        self.setup_current_time_clock()
+
+    def setup_current_time_clock(self):
+        self.current_time_timer = QTimer(self)
+        self.current_time_timer.timeout.connect(self.update_current_time_label)
+        self.update_current_time_label()
+        self.current_time_timer.start(1000)
+
+    def update_current_time_label(self):
+        self.current_time_label.setText(QTime.currentTime().toString("HH:mm:ss"))
 
     def update_week_label(self):
         week_end = self.week_start + timedelta(days=6)

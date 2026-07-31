@@ -43,8 +43,8 @@ class CalendarGridWidget(
         self.note_marker_size = 18
         self.show_note_markers = True
         self.theme_colors = theme_colors("dark")
-        self.event_text_vertical_padding = 12
-        self.event_padding = 4
+        self.event_content_padding = 16
+        self.event_text_gap = 2
         self.selected_border_width = 3
         self.week_start = date.today() - timedelta(days=date.today().weekday())
         self.events = []

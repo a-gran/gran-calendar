@@ -26,6 +26,8 @@ def initialize_calendar_window_widgets(window):
     window.settings_button = QPushButton("⚙")
     window.settings_button.setFixedSize(32, 32)
     window.settings_button.setToolTip("Settings")
+    window.current_time_label = QLabel()
+    window.current_time_label.setStyleSheet("font-size: 32px; font-weight: bold;")
     window.overview_toggle_button = QPushButton(MONTH_CALENDAR_BUTTON_TEXT)
     window.calendar_grid = CalendarGridWidget()
     window.calendar_header = CalendarHeaderWidget()

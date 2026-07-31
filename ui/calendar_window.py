@@ -63,4 +63,7 @@ class CalendarWindow(
         self.selected_event = None
         self.selected_details_ranges = []
         self.calendar_grid.clear_selection()
+        if self.calendar_view_stack.currentWidget() == self.month_overview:
+            self.details_view_stack.setCurrentWidget(self.month_day_details)
+            return
         self.update_event_details_panel()

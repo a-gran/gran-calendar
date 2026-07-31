@@ -1,7 +1,7 @@
 from datetime import date
 
-from PySide6.QtCore import Signal
-from PySide6.QtGui import QColor, QPen
+from PySide6.QtCore import QRect, QSize, Qt, Signal
+from PySide6.QtGui import QColor, QFontMetrics, QPen
 from PySide6.QtWidgets import (
     QCalendarWidget,
     QHBoxLayout,
@@ -84,6 +84,18 @@ class OverviewEventRow(QWidget):
         self.text_label.setText(text)
         self.title_edit.setText(title)
         self.show_display()
+
+    def overview_size_hint(self, available_width):
+        layout_spacing = self.layout().spacing()
+        buttons_width = self.edit_button.width() + self.action_button.width()
+        text_width = max(1, available_width - buttons_width - layout_spacing * 3)
+        text_height = QFontMetrics(self.text_label.font()).boundingRect(
+            QRect(0, 0, text_width, 2000),
+            Qt.AlignTop | Qt.AlignLeft | Qt.TextWordWrap,
+            self.text_label.text(),
+        ).height()
+        row_height = max(text_height, self.edit_button.height(), self.action_button.height()) + 10
+        return QSize(0, row_height)
 
     def toggle_title_edit(self):
         if self.is_editing:

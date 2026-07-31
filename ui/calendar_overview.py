@@ -96,6 +96,7 @@ class CalendarOverviewMixin:
 
     def update_year_month_details(self, year, month):
         self.overview_details_scope = "month"
+        self.details_view_stack.setCurrentWidget(self.month_day_details)
         self.month_overview_date = date(year, month, 1)
         self.month_day_title.setText(f"{month_names()[month - 1]} {year}")
         self.month_day_events.clear()

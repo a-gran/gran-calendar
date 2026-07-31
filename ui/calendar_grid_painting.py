@@ -115,7 +115,12 @@ class CalendarGridPaintingMixin:
 
     def draw_event_text(self, painter, event, event_rect):
         text_color = self.event_text_color(event)
-        text_rect = event_rect.adjusted(6, 4, -6, -4)
+        text_rect = event_rect.adjusted(
+            self.event_content_padding,
+            self.event_content_padding,
+            -self.event_content_padding,
+            -self.event_content_padding,
+        )
         time_text = self.format_event_time(event)
         time_height = QFontMetrics(self.event_time_font()).height()
         marker_padding = self.note_marker_size + 8 if self.show_note_markers and self.event_has_note(event) else 0
@@ -125,9 +130,9 @@ class CalendarGridPaintingMixin:
         painter.drawText(time_rect, Qt.AlignTop | Qt.AlignLeft, time_text)
         title_rect = QRect(
             text_rect.left(),
-            text_rect.top() + time_height + 2,
+            text_rect.top() + time_height + self.event_text_gap,
             text_rect.width(),
-            max(0, text_rect.height() - time_height - 2),
+            max(0, text_rect.height() - time_height - self.event_text_gap),
         )
         painter.setFont(
             self.event_font(
@@ -144,7 +149,12 @@ class CalendarGridPaintingMixin:
 
     def draw_event_note_marker(self, painter, event_rect):
         marker_size = self.note_marker_size
-        marker_rect = QRect(event_rect.right() - marker_size - 5, event_rect.top() + 5, marker_size, marker_size)
+        marker_rect = QRect(
+            event_rect.right() - marker_size - self.event_content_padding,
+            event_rect.top() + self.event_content_padding,
+            marker_size,
+            marker_size,
+        )
         painter.fillRect(marker_rect, QColor("#facc15"))
         painter.setPen(QPen(QColor("#111827"), 1))
         painter.drawRect(marker_rect)

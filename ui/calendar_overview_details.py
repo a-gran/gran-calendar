@@ -1,7 +1,6 @@
 from dataclasses import replace
 from datetime import datetime, time, timedelta
 
-from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QListWidgetItem
 
 from domain.clock import current_datetime
@@ -27,6 +26,7 @@ class CalendarOverviewDetailsMixin:
 
     def update_month_day_details(self, selected_date):
         self.overview_details_scope = "day"
+        self.details_view_stack.setCurrentWidget(self.month_day_details)
         self.month_overview_date = selected_date
         self.update_month_buttons()
         self.month_day_title.setText(f"{day_name(selected_date)} {selected_date.strftime('%d.%m.%Y')}")
@@ -52,7 +52,7 @@ class CalendarOverviewDetailsMixin:
         row.restore_requested.connect(self.restore_overview_event)
         row.double_clicked.connect(self.open_overview_event)
         row.title_submitted.connect(self.update_overview_event_title)
-        item.setSizeHint(QSize(0, 36))
+        item.setSizeHint(row.overview_size_hint(self.overview_events_width()))
         self.month_day_events.addItem(item)
         self.month_day_events.setItemWidget(item, row)
 
@@ -68,6 +68,7 @@ class CalendarOverviewDetailsMixin:
         row = self.overview_row_for_event(event.id)
         if row is not None:
             row.set_display_text(self.format_overview_event(event), event.title)
+            self.update_overview_event_item_size(event.id)
 
     def format_overview_event(self, event):
         if self.overview_details_scope == "month":
@@ -123,6 +124,17 @@ class CalendarOverviewDetailsMixin:
             if row is not None and row.event_id == event_id:
                 return row
         return None
+
+    def update_overview_event_item_size(self, event_id):
+        for index in range(self.month_day_events.count()):
+            item = self.month_day_events.item(index)
+            row = self.month_day_events.itemWidget(item)
+            if row is not None and row.event_id == event_id:
+                item.setSizeHint(row.overview_size_hint(self.overview_events_width()))
+                return
+
+    def overview_events_width(self):
+        return min(self.month_day_events.width(), self.month_day_events.viewport().width())
 
     def event_from_overview(self, event_id):
         if self.overview_details_scope == "month":

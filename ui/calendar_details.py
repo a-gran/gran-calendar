@@ -1,5 +1,5 @@
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QAbstractItemView, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QAbstractItemView, QHBoxLayout, QLabel, QVBoxLayout
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
 from domain.event_status import EVENT_STATUS_NORMAL
@@ -13,13 +13,17 @@ from ui.calendar_styles import (
 
 class CalendarDetailsMixin:
     def setup_event_details_panel(self):
-        self.event_details_panel.setFixedWidth(400)
+        self.event_details_panel.setFixedWidth(440)
         self.event_details_panel.setStyleSheet(DETAILS_PANEL_STYLE)
         self.month_day_open_button.clicked.connect(self.open_month_overview_day)
         self.setup_event_details_form()
         self.setup_month_day_details()
         panel_layout = QVBoxLayout()
         panel_layout.setContentsMargins(16, 16, 16, 16)
+        time_layout = QHBoxLayout()
+        time_layout.setContentsMargins(0, 0, 0, 0)
+        time_layout.addWidget(self.current_time_label)
+        panel_layout.addLayout(time_layout)
         panel_layout.addWidget(self.details_view_stack)
         self.event_details_panel.setLayout(panel_layout)
 

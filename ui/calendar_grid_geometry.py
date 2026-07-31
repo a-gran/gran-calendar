@@ -53,7 +53,7 @@ class CalendarGridGeometryMixin:
 
     def text_height_for_event(self, event):
         day_width = max(1, int((self.width() - self.time_axis_width) / 7))
-        text_width = day_width - self.event_padding * 2 - 12
+        text_width = day_width - self.event_content_padding * 2
         if text_width <= 0:
             return self.slot_height
         time_height = QFontMetrics(self.event_time_font()).height()
@@ -69,7 +69,14 @@ class CalendarGridGeometryMixin:
             Qt.AlignTop | Qt.AlignLeft | Qt.TextWordWrap,
             event.title,
         )
-        return max(self.slot_height, time_height + text_rect.height() + self.event_text_vertical_padding + 8)
+        needed_height = (
+            self.event_content_padding
+            + time_height
+            + self.event_text_gap
+            + text_rect.height()
+            + self.event_content_padding
+        )
+        return max(self.slot_height, needed_height)
 
     def slot_index_for_datetime(self, value):
         minutes_from_start = (value.hour - self.day_start_hour) * 60 + value.minute
