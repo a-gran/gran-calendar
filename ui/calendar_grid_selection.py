@@ -1,4 +1,4 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 
 
 class CalendarGridSelectionMixin:
@@ -67,20 +67,9 @@ class CalendarGridSelectionMixin:
         ranges = []
         current_day = first_day
         while current_day <= last_day:
-            start_at = datetime.combine(
-                current_day,
-                time(
-                    hour=self.day_start_hour + start_minutes // 60,
-                    minute=start_minutes % 60,
-                ),
-            )
-            end_at = datetime.combine(
-                current_day,
-                time(
-                    hour=self.day_start_hour + end_minutes // 60,
-                    minute=end_minutes % 60,
-                ),
-            )
+            day_start = datetime.combine(current_day, time(hour=self.day_start_hour))
+            start_at = day_start + timedelta(minutes=start_minutes)
+            end_at = day_start + timedelta(minutes=end_minutes)
             ranges.append((start_at, end_at))
             current_day += timedelta(days=1)
         return ranges

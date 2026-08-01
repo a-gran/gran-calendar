@@ -33,7 +33,7 @@ class CalendarGridDragMixin:
 
     def clamped_event_start(self, start_at, event_duration):
         day_start = datetime.combine(start_at.date(), time(hour=self.day_start_hour))
-        day_end = datetime.combine(start_at.date(), time(hour=self.day_end_hour))
+        day_end = datetime.combine(start_at.date(), time.min) + timedelta(hours=self.day_end_hour)
         latest_start = day_end - event_duration
         if start_at < day_start:
             return day_start

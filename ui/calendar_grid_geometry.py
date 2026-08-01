@@ -117,9 +117,8 @@ class CalendarGridGeometryMixin:
     def datetime_for_slot_index(self, selected_date, slot_index):
         slot_index = max(0, min(self.total_slots(), slot_index))
         minutes_from_start = slot_index * self.slot_minutes
-        selected_hour = self.day_start_hour + minutes_from_start // 60
-        selected_minute = minutes_from_start % 60
-        return datetime.combine(selected_date, time(hour=selected_hour, minute=selected_minute))
+        day_start = datetime.combine(selected_date, time(hour=self.day_start_hour))
+        return day_start + timedelta(minutes=minutes_from_start)
 
     def datetime_from_position(self, position):
         if position.x() < self.time_axis_width:
@@ -138,8 +137,9 @@ class CalendarGridGeometryMixin:
         day_index = (start_at.date() - self.week_start).days
         if day_index < 0 or day_index > 6:
             return None
-        start_minutes = (start_at.hour - self.day_start_hour) * 60 + start_at.minute
-        end_minutes = (end_at.hour - self.day_start_hour) * 60 + end_at.minute
+        day_start = datetime.combine(start_at.date(), time(hour=self.day_start_hour))
+        start_minutes = int((start_at - day_start).total_seconds() / 60)
+        end_minutes = int((end_at - day_start).total_seconds() / 60)
         if end_minutes <= 0 or start_minutes >= self.total_slots() * self.slot_minutes:
             return None
         start_minutes = max(0, start_minutes)

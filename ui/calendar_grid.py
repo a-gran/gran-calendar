@@ -31,8 +31,8 @@ class CalendarGridWidget(
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.day_start_hour = 6
-        self.day_end_hour = 22
+        self.day_start_hour = 4
+        self.day_end_hour = 24
         self.slot_minutes = 30
         self.time_axis_width = 72
         self.header_height = 0

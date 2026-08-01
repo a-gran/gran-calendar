@@ -70,7 +70,7 @@ class CalendarGridPaintingMixin:
             painter.drawLine(self.time_axis_width, y, self.width(), y)
             if is_hour_line:
                 hour = self.day_start_hour + slot_index // 2
-                time_text = f"{hour:02d}:00"
+                time_text = f"{hour % 24:02d}:00"
                 text_rect = QRect(0, y + 2, self.time_axis_width - 8, 20)
                 painter.setPen(QPen(QColor(self.theme_colors["muted_text"])))
                 painter.drawText(text_rect, Qt.AlignRight | Qt.AlignTop, time_text)
