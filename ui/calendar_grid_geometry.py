@@ -29,7 +29,7 @@ class CalendarGridGeometryMixin:
         heights = [self.slot_height for _ in range(self.total_slots())]
         for event in self.events:
             start_slot = self.slot_index_for_datetime(event.start_at)
-            end_slot = self.slot_index_for_datetime(event.end_at)
+            end_slot = self.slot_index_for_event_end(event)
             if start_slot >= end_slot:
                 continue
             needed_height = self.text_height_for_event(event)
@@ -39,6 +39,11 @@ class CalendarGridGeometryMixin:
         self.slot_heights_cache = heights
         self.slot_cache_width = self.width()
         return heights
+
+    def slot_index_for_event_end(self, event):
+        if event.end_at.date() > event.start_at.date():
+            return self.total_slots()
+        return self.slot_index_for_datetime(event.end_at)
 
     def slot_tops(self):
         if self.slot_tops_cache is not None and self.slot_cache_width == self.width():

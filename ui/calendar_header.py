@@ -38,6 +38,11 @@ class CalendarHeaderWidget(QWidget):
         self.theme_colors = theme_colors(theme_name)
         self.update()
 
+    def day_text_color(self, current_day):
+        if current_day == date.today():
+            return QColor("#facc15")
+        return QColor(self.theme_colors["text"])
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -47,7 +52,7 @@ class CalendarHeaderWidget(QWidget):
             column_rect = self.day_column_rect(day_index)
             current_day = self.week_start + timedelta(days=day_index)
             day_text = f"{self.day_names[day_index]} {current_day.strftime('%d.%m')}"
-            painter.setPen(QPen(QColor(self.theme_colors["text"])))
+            painter.setPen(QPen(self.day_text_color(current_day)))
             painter.drawText(column_rect, Qt.AlignCenter, day_text)
 
     def day_column_rect(self, day_index):

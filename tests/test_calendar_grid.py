@@ -44,6 +44,23 @@ def test_grid_expands_only_row_with_long_event(qt_app, make_event):
     assert all(height == grid.slot_height for index, height in enumerate(heights) if index != target_slot)
 
 
+def test_grid_expands_bottom_event_ending_at_midnight(qt_app, make_event):
+    grid = CalendarGridWidget()
+    grid.resize(720, 600)
+    start_at = datetime.combine(grid.week_start, datetime.min.time()).replace(hour=23)
+    title = "ItGen: тесты на блочный Python"
+    event = make_event(event_id="bottom-long", title=title, start_at=start_at, duration_minutes=60)
+
+    grid.set_events([event])
+
+    start_slot = grid.slot_index_for_datetime(start_at)
+    end_slot = grid.slot_index_for_event_end(event)
+    event_height = sum(grid.slot_heights()[start_slot:end_slot])
+
+    assert end_slot == grid.total_slots()
+    assert event_height >= grid.text_height_for_event(event)
+
+
 def test_grid_reuses_slot_height_cache_until_invalidated(qt_app, make_event):
     grid = CalendarGridWidget()
     grid.resize(720, 600)

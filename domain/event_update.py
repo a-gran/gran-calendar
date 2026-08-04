@@ -1,4 +1,7 @@
-def apply_event_snapshot(event, snapshot):
+from domain.event import Event
+
+
+def apply_event_snapshot(event: Event, snapshot: Event) -> None:
     event.title = snapshot.title
     event.note = snapshot.note
     event.start_at = snapshot.start_at

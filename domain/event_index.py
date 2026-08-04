@@ -1,16 +1,18 @@
-from datetime import timedelta
+from datetime import date, datetime, timedelta
+
+from domain.event import Event
 
 
-def sort_events(events):
+def sort_events(events: list[Event]) -> list[Event]:
     return sorted(events, key=lambda event: (event.start_at, event.created_at))
 
 
-def build_event_id_index(events):
+def build_event_id_index(events: list[Event]) -> dict[str, Event]:
     return {event.id: event for event in events}
 
 
-def build_event_date_index(events):
-    events_by_date = {}
+def build_event_date_index(events: list[Event]) -> dict[date, list[Event]]:
+    events_by_date: dict[date, list[Event]] = {}
     for event in events:
         current_date = event.start_at.date()
         last_date = (event.end_at - timedelta(microseconds=1)).date()
@@ -20,13 +22,17 @@ def build_event_date_index(events):
     return events_by_date
 
 
-def events_for_range(events_by_date, start_at, end_at):
+def events_for_range(
+    events_by_date: dict[date, list[Event]],
+    start_at: datetime,
+    end_at: datetime,
+) -> list[Event]:
     if end_at <= start_at:
         return []
     current_date = start_at.date()
     last_date = (end_at - timedelta(microseconds=1)).date()
-    result = []
-    seen_ids = set()
+    result: list[Event] = []
+    seen_ids: set[str] = set()
     while current_date <= last_date:
         for event in events_by_date.get(current_date, []):
             if event.id in seen_ids:
@@ -38,7 +44,11 @@ def events_for_range(events_by_date, start_at, end_at):
     return result
 
 
-def find_event_by_id(events, events_by_id, event_id):
+def find_event_by_id(
+    events: list[Event],
+    events_by_id: dict[str, Event] | None,
+    event_id: str,
+) -> Event | None:
     if events_by_id is not None:
         event = events_by_id.get(event_id)
         if event is not None:

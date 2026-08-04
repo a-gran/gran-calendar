@@ -1,7 +1,7 @@
 import shutil
 import sqlite3
 from datetime import datetime
-from os import environ
+from os import PathLike, environ
 from pathlib import Path
 
 from domain.event import Event
@@ -13,21 +13,21 @@ DATABASE_FILE_NAME = "calendar.db"
 LEGACY_DATABASE_PATH = Path(__file__).resolve().parent.parent / DATABASE_FILE_NAME
 
 
-def get_application_data_directory():
+def get_application_data_directory() -> Path:
     xdg_data_home = environ.get("XDG_DATA_HOME")
     if xdg_data_home:
         return Path(xdg_data_home).expanduser() / APPLICATION_DIRECTORY_NAME
     return Path.home() / ".local" / "share" / APPLICATION_DIRECTORY_NAME
 
 
-def get_legacy_application_data_directory():
+def get_legacy_application_data_directory() -> Path:
     xdg_data_home = environ.get("XDG_DATA_HOME")
     if xdg_data_home:
         return Path(xdg_data_home).expanduser() / LEGACY_APPLICATION_DIRECTORY_NAME
     return Path.home() / ".local" / "share" / LEGACY_APPLICATION_DIRECTORY_NAME
 
 
-def get_database_path():
+def get_database_path() -> Path:
     return get_application_data_directory() / DATABASE_FILE_NAME
 
 
@@ -35,11 +35,11 @@ DATABASE_PATH = get_database_path()
 LEGACY_APPLICATION_DATABASE_PATH = get_legacy_application_data_directory() / DATABASE_FILE_NAME
 
 
-def ensure_database_directory(database_path):
+def ensure_database_directory(database_path: str | PathLike[str]) -> None:
     Path(database_path).expanduser().parent.mkdir(parents=True, exist_ok=True)
 
 
-def migrate_legacy_database(database_path, legacy_database_path):
+def migrate_legacy_database(database_path: str | PathLike[str], legacy_database_path: str | PathLike[str]) -> None:
     database_path = Path(database_path).expanduser()
     legacy_database_path = Path(legacy_database_path).expanduser()
     if database_path.exists() or not legacy_database_path.exists():
@@ -49,7 +49,11 @@ def migrate_legacy_database(database_path, legacy_database_path):
 
 
 class EventStorage:
-    def __init__(self, database_path, legacy_database_path=None):
+    def __init__(
+        self,
+        database_path: str | PathLike[str],
+        legacy_database_path: str | PathLike[str] | None = None,
+    ) -> None:
         self.database_path = Path(database_path).expanduser()
         if legacy_database_path is None and self.database_path == DATABASE_PATH:
             legacy_database_path = LEGACY_APPLICATION_DATABASE_PATH
@@ -60,12 +64,12 @@ class EventStorage:
         ensure_database_directory(self.database_path)
         self.initialize_database()
 
-    def connect(self):
+    def connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database_path)
         connection.row_factory = sqlite3.Row
         return connection
 
-    def initialize_database(self):
+    def initialize_database(self) -> None:
         with self.connect() as connection:
             connection.execute(
                 """
@@ -89,7 +93,7 @@ class EventStorage:
                 )
             connection.execute("CREATE INDEX IF NOT EXISTS idx_events_start_at ON events(start_at)")
 
-    def save_event(self, event):
+    def save_event(self, event: Event) -> None:
         with self.connect() as connection:
             connection.execute(
                 """
@@ -124,7 +128,7 @@ class EventStorage:
                 ),
             )
 
-    def load_events_between(self, start_at, end_at):
+    def load_events_between(self, start_at: datetime, end_at: datetime) -> list[Event]:
         with self.connect() as connection:
             rows = connection.execute(
                 """
@@ -145,11 +149,11 @@ class EventStorage:
             ).fetchall()
         return [self.event_from_row(row) for row in rows]
 
-    def delete_event(self, event):
+    def delete_event(self, event: Event) -> None:
         with self.connect() as connection:
             connection.execute("DELETE FROM events WHERE id = ?", (event.id,))
 
-    def event_from_row(self, row):
+    def event_from_row(self, row: sqlite3.Row) -> Event:
         return Event(
             id=row["id"],
             title=row["title"],

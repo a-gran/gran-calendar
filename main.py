@@ -14,7 +14,7 @@ ICON_PATH = Path(__file__).resolve().parent / "packaging" / "gran-calendar.svg"
 PROJECT_METADATA_PATH = Path(__file__).resolve().parent / "pyproject.toml"
 
 
-def application_desktop_file_exists():
+def application_desktop_file_exists() -> bool:
     desktop_file_name = f"{APPLICATION_ID}.desktop"
     data_dirs = [Path.home() / ".local" / "share"]
     xdg_data_dirs = environ.get("XDG_DATA_DIRS", "/usr/local/share:/usr/share")
@@ -22,7 +22,7 @@ def application_desktop_file_exists():
     return any((data_dir / "applications" / desktop_file_name).exists() for data_dir in data_dirs)
 
 
-def get_application_version():
+def get_application_version() -> str:
     if not PROJECT_METADATA_PATH.exists():
         return "0.0.0"
     with PROJECT_METADATA_PATH.open("rb") as metadata_file:
@@ -30,7 +30,7 @@ def get_application_version():
     return metadata["project"]["version"]
 
 
-def apply_application_metadata(app):
+def apply_application_metadata(app: QApplication) -> None:
     app.setApplicationName(APPLICATION_NAME)
     app.setApplicationVersion(get_application_version())
     if application_desktop_file_exists():
@@ -39,7 +39,7 @@ def apply_application_metadata(app):
         app.setWindowIcon(QIcon(str(ICON_PATH)))
 
 
-def apply_dark_theme(app):
+def apply_dark_theme(app: QApplication) -> None:
     font = QFont("Sans Serif")
     font.setStyleHint(QFont.SansSerif)
     font.setPixelSize(16)
@@ -142,7 +142,7 @@ def apply_dark_theme(app):
     )
 
 
-def main():
+def main() -> None:
     app = QApplication(sys.argv)
     apply_application_metadata(app)
     apply_dark_theme(app)

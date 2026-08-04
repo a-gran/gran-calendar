@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from ui.calendar_header import CalendarHeaderWidget
 
@@ -25,3 +25,10 @@ def test_header_reserves_right_padding_for_scrollbar(qt_app):
     header.set_right_padding(20)
 
     assert header.day_column_rect(6).right() == 751
+
+
+def test_header_highlights_current_day(qt_app):
+    header = CalendarHeaderWidget()
+
+    assert header.day_text_color(date.today()).name() == "#facc15"
+    assert header.day_text_color(date.today() + timedelta(days=8)).name() == header.theme_colors["text"]
