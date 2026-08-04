@@ -117,3 +117,24 @@ def test_window_keyboard_paste_overwrites_busy_selected_slots(qt_app, tmp_path, 
 
     assert len(window.events) == 3
     assert window.find_event_by_id(window.events, "busy-source") is None
+
+
+def test_window_keyboard_paste_replaces_selected_target_event(qt_app, tmp_path, monkeypatch, make_event):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    source_start = datetime.combine(window.week_start, datetime.min.time()).replace(hour=9)
+    target_start = source_start + timedelta(hours=2)
+    source_event = make_event(event_id="source", title="Copied", start_at=source_start, duration_minutes=60)
+    target_event = make_event(event_id="target", title="Old", start_at=target_start, duration_minutes=60)
+
+    window.events = [source_event, target_event]
+    window.refresh_calendar()
+    window.select_event(source_event)
+    window.copy_keyboard_selection()
+    window.select_event(target_event)
+    window.paste_keyboard_selection()
+
+    assert len(window.events) == 2
+    assert window.find_event_by_id(window.events, "target") is None
+    pasted_event = next(event for event in window.events if event.id not in {"source", "target"})
+    assert pasted_event.title == "Copied"
+    assert pasted_event.start_at == target_start

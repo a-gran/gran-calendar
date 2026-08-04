@@ -25,6 +25,10 @@ class CalendarClipboardMixin:
             self.show_status_message("No copied event.", 3000)
             return
         selected_slots = self.calendar_grid.selected_slots()
+        if not selected_slots and self.selected_event is not None:
+            selected_event = self.find_event_by_id(self.events, self.selected_event.id)
+            if selected_event is not None:
+                selected_slots = [selected_event.start_at]
         if not selected_slots:
             self.show_status_message("Select a slot to paste the event.", 3000)
             return
