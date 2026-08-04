@@ -13,7 +13,7 @@ class CalendarHeaderWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.time_axis_width = 72
-        self.header_height = 36
+        self.header_height = 42
         self.right_padding = 0
         self.week_start = date.today() - timedelta(days=date.today().weekday())
         self.theme_colors = theme_colors("dark")
@@ -22,7 +22,7 @@ class CalendarHeaderWidget(QWidget):
     def calendar_font(self):
         font = QFont("Sans Serif")
         font.setStyleHint(QFont.SansSerif)
-        font.setPixelSize(16)
+        font.setPixelSize(24)
         font.setBold(True)
         return font
 
