@@ -1,7 +1,21 @@
 import re
 from datetime import datetime, timedelta
 
+from PySide6.QtCore import QPoint
+
 from tests.calendar_window_helpers import make_window
+
+
+class WheelEvent:
+    def __init__(self, pixel_y=0, angle_y=0):
+        self.pixel_y = pixel_y
+        self.angle_y = angle_y
+
+    def pixelDelta(self):
+        return QPoint(0, self.pixel_y)
+
+    def angleDelta(self):
+        return QPoint(0, self.angle_y)
 
 
 def test_window_detects_event_overlap(qt_app, tmp_path, monkeypatch, make_event):
@@ -69,6 +83,37 @@ def test_window_uses_wide_details_panel(qt_app, tmp_path, monkeypatch):
     assert window.event_details_panel.width() == 400
 
 
+def test_window_wheel_scrolls_active_calendar_area(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    scrollbar = window.calendar_scroll_area.verticalScrollBar()
+    scrollbar.setRange(0, 1000)
+    scrollbar.setValue(500)
+
+    window.scroll_active_calendar_area(WheelEvent(angle_y=-120))
+
+    assert scrollbar.value() == 620
+
+
+def test_window_wheel_scrolls_year_overview_area(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    window.show_month_overview()
+    scrollbar = window.year_overview_scroll_area.verticalScrollBar()
+    scrollbar.setRange(0, 1000)
+    scrollbar.setValue(500)
+
+    window.scroll_active_calendar_area(WheelEvent(angle_y=-120))
+
+    assert scrollbar.value() == 620
+
+
+def test_window_keeps_month_event_list_wheel_scroll(qt_app, tmp_path, monkeypatch):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+
+    assert window.should_keep_widget_wheel_scroll(window.month_day_events)
+    assert window.should_keep_widget_wheel_scroll(window.month_day_events.viewport())
+    assert not window.should_keep_widget_wheel_scroll(window.calendar_grid)
+
+
 def test_window_has_small_settings_icon_button(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
@@ -112,7 +157,7 @@ def test_window_applies_visual_settings(qt_app, tmp_path, monkeypatch):
     assert not window.calendar_grid.show_note_markers
     assert window.calendar_grid.theme_colors["normal_event_background"] == "#ffffff"
     assert window.calendar_header.theme_colors["normal_event_background"] == "#ffffff"
-    assert window.month_calendar.theme_colors["normal_event_background"] == "#ffffff"
+    assert window.year_month_calendars[0].theme_colors["normal_event_background"] == "#ffffff"
     assert window.event_details_panel.width() == 460
 
 

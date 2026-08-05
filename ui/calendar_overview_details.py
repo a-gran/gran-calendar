@@ -24,11 +24,12 @@ class CalendarOverviewDetailsMixin:
             f"{event.start_at.strftime('%H:%M')} - {event.end_at.strftime('%H:%M')}  {event.title}"
         )
 
-    def update_month_day_details(self, selected_date):
+    def update_month_day_details(self, selected_date, should_sync_calendars=True):
         self.overview_details_scope = "day"
         self.details_view_stack.setCurrentWidget(self.month_day_details)
         self.month_overview_date = selected_date
-        self.update_month_buttons()
+        if should_sync_calendars:
+            self.update_month_buttons()
         self.month_day_title.setText(f"{day_name(selected_date)} {selected_date.strftime('%d.%m.%Y')}")
         self.month_day_events.clear()
         for event in self.events_for_overview_date(selected_date):

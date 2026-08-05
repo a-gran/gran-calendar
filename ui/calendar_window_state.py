@@ -16,7 +16,9 @@ def initialize_calendar_window_state(window, database_path):
     window.history_manager = HistoryManager(window.undo_limit)
     window.storage = EventStorage(database_path)
     window.month_overview_date = window.week_start
-    window.year_month_buttons = []
+    window.year_month_calendars = []
+    window.year_month_title_buttons = []
+    window.year_highlighted_date = None
     window.year_overview_month = window.week_start.month
     window.year_overview_year = window.week_start.year
     window.overview_details_scope = "day"

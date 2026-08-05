@@ -92,7 +92,8 @@ class CalendarSettingsMixin:
         self.event_details_message.setStyleSheet(details_message_style(self.visual_settings["theme"]))
         self.event_details_status.set_theme(self.visual_settings["theme"])
         self.calendar_header.set_theme(self.visual_settings["theme"])
-        self.month_calendar.set_theme(self.visual_settings["theme"])
+        for month_calendar in self.year_month_calendars:
+            month_calendar.set_theme(self.visual_settings["theme"])
         self.calendar_grid.apply_visual_settings(
             self.visual_settings["slot_height"],
             self.visual_settings["time_font_size"],

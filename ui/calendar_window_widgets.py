@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
 from ui.calendar_grid import CalendarGridWidget
 from ui.calendar_header import CalendarHeaderWidget
 from ui.calendar_styles import MONTH_CALENDAR_BUTTON_TEXT
-from ui.calendar_widgets import MonthOnlyCalendarWidget, MultilineTitleEdit
+from ui.calendar_widgets import MultilineTitleEdit
 from ui.status_selector import StatusSelector
 from ui.year_selector import YearSelector
 
@@ -34,7 +34,9 @@ def initialize_calendar_window_widgets(window):
     window.calendar_view_stack = QStackedWidget()
     window.week_view = QWidget()
     window.month_overview = QWidget()
-    window.month_calendar = MonthOnlyCalendarWidget()
+    window.year_month_calendars = []
+    window.year_month_title_buttons = []
+    window.year_overview_scroll_area = QScrollArea()
     window.year_spinbox = YearSelector()
     window.calendar_scroll_area = QScrollArea()
     window.event_details_panel = QFrame()

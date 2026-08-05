@@ -20,8 +20,8 @@ def test_window_overview_selects_month_and_shows_month_events(qt_app, tmp_path, 
     assert window.calendar_view_stack.currentWidget() == window.month_overview
     assert window.details_view_stack.currentWidget() == window.month_day_details
     assert window.month_day_title.text() == f"{month_names()[selected_date.month - 1]} {selected_date.year}"
-    assert window.month_calendar.selectedDate() == QDate(selected_date.year, selected_date.month, 1)
-    assert window.month_calendar.minimumDate() == QDate(selected_date.year, selected_date.month, 1)
-    assert window.month_calendar.maximumDate() == QDate(selected_date.year, selected_date.month, 30)
-    assert window.year_month_buttons[selected_date.month - 1].isChecked()
+    month_calendar = window.year_month_calendars[selected_date.month - 1]
+    assert month_calendar.selectedDate() == QDate(selected_date.year, selected_date.month, 1)
+    assert month_calendar.minimumDate() == QDate(selected_date.year, selected_date.month, 1)
+    assert month_calendar.maximumDate() == QDate(selected_date.year, selected_date.month, 30)
     assert "10:00 - 11:30  Month Event" in overview_event_text(window, 0)

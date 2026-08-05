@@ -15,8 +15,11 @@ class CalendarWeekMixin:
         left_navigation_layout.addWidget(self.previous_week_button)
         left_navigation_layout.addWidget(self.current_week_button)
         left_navigation_layout.addWidget(self.next_week_button)
+        self.year_spinbox.hide()
+        left_navigation_layout.addWidget(self.year_spinbox)
         left_navigation_layout.addStretch()
         left_navigation.setLayout(left_navigation_layout)
+        self.left_navigation = left_navigation
         right_navigation = QWidget()
         right_navigation_layout = QHBoxLayout()
         right_navigation_layout.setContentsMargins(0, 0, 0, 0)

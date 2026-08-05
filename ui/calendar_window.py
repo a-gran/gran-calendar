@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtCore import QEvent
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget
 
 from storage.event_storage import DATABASE_PATH
 from ui.calendar_clipboard import CalendarClipboardMixin
@@ -46,10 +47,41 @@ class CalendarWindow(
         self.setup_shortcuts()
         self.update_calendar_header_padding()
         self.select_default_start_slot()
+        QApplication.instance().installEventFilter(self)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self.update_calendar_header_padding()
+        if hasattr(self, "calendar_view_stack") and self.calendar_view_stack.currentWidget() == self.month_overview:
+            self.update_year_overview_calendar_sizes()
+
+    def eventFilter(self, watched, event):
+        if event.type() == QEvent.Wheel and self.should_scroll_window_from_wheel(watched):
+            if self.should_keep_widget_wheel_scroll(watched):
+                return super().eventFilter(watched, event)
+            self.scroll_active_calendar_area(event)
+            return True
+        return super().eventFilter(watched, event)
+
+    def should_keep_widget_wheel_scroll(self, watched):
+        if not hasattr(self, "month_day_events"):
+            return False
+        return watched is self.month_day_events or self.month_day_events.isAncestorOf(watched)
+
+    def should_scroll_window_from_wheel(self, watched):
+        if not isinstance(watched, QWidget):
+            return False
+        return watched is self or self.isAncestorOf(watched)
+
+    def scroll_active_calendar_area(self, event):
+        scroll_area = self.year_overview_scroll_area
+        if self.calendar_view_stack.currentWidget() != self.month_overview:
+            scroll_area = self.calendar_scroll_area
+        scrollbar = scroll_area.verticalScrollBar()
+        pixel_delta = event.pixelDelta().y()
+        angle_delta = event.angleDelta().y()
+        scroll_delta = pixel_delta if pixel_delta else angle_delta
+        scrollbar.setValue(scrollbar.value() - scroll_delta)
 
     def update_calendar_header_padding(self):
         scrollbar = self.calendar_scroll_area.verticalScrollBar()

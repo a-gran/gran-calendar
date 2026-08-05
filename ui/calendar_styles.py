@@ -103,6 +103,16 @@ YEAR_SELECTOR_STYLE = (
     "font-size: 12px; font-weight: bold; padding: 0; }"
     "QPushButton:hover { background: #334155; }"
 )
-MONTH_CALENDAR_BUTTON_TEXT = "Month"
+MONTH_CALENDAR_BUTTON_TEXT = "Year"
 WEEK_CALENDAR_BUTTON_TEXT = "Week"
-MONTH_OVERVIEW_CALENDAR_HEIGHT = 430
+YEAR_MONTH_CALENDAR_HEIGHT = 220
+YEAR_MONTH_TITLE_BUTTON_STYLE = (
+    "QPushButton { background: transparent; color: #e5e7eb; border: none; "
+    "font-size: 18px; font-weight: bold; padding: 0; }"
+    "QPushButton:hover { color: #93c5fd; }"
+)
+CURRENT_YEAR_MONTH_TITLE_BUTTON_STYLE = (
+    "QPushButton { background: transparent; color: #facc15; border: none; "
+    "font-size: 18px; font-weight: bold; padding: 0; }"
+    "QPushButton:hover { color: #fde68a; }"
+)

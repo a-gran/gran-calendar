@@ -6,18 +6,6 @@ from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWi
 from ui.calendar_styles import YEAR_SELECTOR_STYLE
 
 
-class YearMonthButton(QPushButton):
-    double_clicked = Signal(int)
-
-    def __init__(self, month, label):
-        super().__init__(label)
-        self.month = month
-
-    def mouseDoubleClickEvent(self, event):
-        self.double_clicked.emit(self.month)
-        super().mouseDoubleClickEvent(event)
-
-
 class YearSelector(QWidget):
     valueChanged = Signal(int)
 
