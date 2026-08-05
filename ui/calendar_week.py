@@ -47,6 +47,7 @@ class CalendarWeekMixin:
 
     def update_current_time_label(self):
         self.current_time_label.setText(QTime.currentTime().toString("HH:mm:ss"))
+        self.calendar_grid.update()
 
     def update_week_label(self):
         week_end = self.week_start + timedelta(days=6)

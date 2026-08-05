@@ -3,6 +3,7 @@ from datetime import timedelta
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QColor, QFont, QFontMetrics, QPainter, QPen
 
+from domain.clock import current_datetime
 from domain.event_status import (
     EVENT_STATUS_COLORS,
     EVENT_STATUS_NORMAL,
@@ -41,6 +42,7 @@ class CalendarGridPaintingMixin:
         self.draw_selection(painter)
         self.draw_selected_slots(painter)
         self.draw_events(painter)
+        self.draw_current_event_borders(painter)
 
     def draw_selected_slots(self, painter):
         for slot_datetime in sorted(self.selected_slot_datetimes):
@@ -163,6 +165,26 @@ class CalendarGridPaintingMixin:
 
     def event_has_note(self, event):
         return bool(event.note.strip())
+
+    def draw_current_event_borders(self, painter):
+        current_moment = current_datetime()
+        border_width = 8
+        border_pen = QPen(QColor("#2563eb"), border_width)
+        border_pen.setJoinStyle(Qt.MiterJoin)
+        painter.setPen(border_pen)
+        for event in self.events:
+            if not self.is_current_event(event, current_moment):
+                continue
+            event_rect = self.event_rect_for_display(event)
+            if event_rect is None:
+                continue
+            inset = int(border_width / 2)
+            painter.drawRect(event_rect.adjusted(inset, inset, -inset, -inset))
+
+    def is_current_event(self, event, current_moment=None):
+        if current_moment is None:
+            current_moment = current_datetime()
+        return event.start_at <= current_moment < event.end_at
 
     def event_fill_color(self, event):
         if event.status == EVENT_STATUS_NORMAL:

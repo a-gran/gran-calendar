@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from PySide6.QtCore import QPoint
 
@@ -88,3 +88,29 @@ def test_grid_detects_events_with_notes(qt_app, make_event):
 
     assert grid.event_has_note(event_with_note)
     assert not grid.event_has_note(event_without_note)
+
+
+def test_grid_detects_current_event(qt_app, make_event):
+    grid = CalendarGridWidget()
+    start_at = datetime(2026, 8, 5, 10, 0)
+    event = make_event(event_id="current", start_at=start_at, duration_minutes=60)
+
+    assert grid.is_current_event(event, start_at + timedelta(minutes=30))
+    assert not grid.is_current_event(event, start_at - timedelta(minutes=1))
+    assert not grid.is_current_event(event, event.end_at)
+
+
+def test_grid_draws_current_event_borders_after_events(qt_app, monkeypatch):
+    grid = CalendarGridWidget()
+    calls = []
+
+    monkeypatch.setattr(grid, "draw_time_grid", lambda painter: calls.append("time"))
+    monkeypatch.setattr(grid, "draw_day_column_lines", lambda painter: calls.append("columns"))
+    monkeypatch.setattr(grid, "draw_selection", lambda painter: calls.append("selection"))
+    monkeypatch.setattr(grid, "draw_selected_slots", lambda painter: calls.append("slots"))
+    monkeypatch.setattr(grid, "draw_events", lambda painter: calls.append("events"))
+    monkeypatch.setattr(grid, "draw_current_event_borders", lambda painter: calls.append("current"))
+
+    grid.grab()
+
+    assert calls[-2:] == ["events", "current"]
