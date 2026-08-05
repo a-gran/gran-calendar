@@ -8,16 +8,17 @@ from domain.event_status import EVENT_STATUS_DONE, EVENT_STATUS_IMPORTANT, EVENT
 from tests.calendar_window_helpers import make_window, mouse_event
 
 
-def test_window_shows_panel_message_when_title_is_missing(qt_app, tmp_path, monkeypatch):
+def test_window_does_not_show_panel_message_when_title_is_missing(qt_app, tmp_path, monkeypatch):
     window = make_window(qt_app, tmp_path, monkeypatch)
 
     window.save_event_details()
 
-    assert window.event_details_message.text() == "Event title is required."
+    assert window.event_details_message.text() == ""
+    assert window.event_details_message.isHidden()
     assert not window.statusBar().isVisible()
 
 
-def test_window_clears_panel_message_when_selection_changes(qt_app, tmp_path, monkeypatch, make_event):
+def test_window_keeps_panel_message_hidden_when_status_message_is_requested(qt_app, tmp_path, monkeypatch, make_event):
     window = make_window(qt_app, tmp_path, monkeypatch)
     start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
     event = make_event(event_id="details", start_at=start_at)

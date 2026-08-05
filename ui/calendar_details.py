@@ -1,10 +1,9 @@
-from PySide6.QtCore import QEvent, Qt, QTimer
+from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QAbstractItemView, QHBoxLayout, QLabel, QVBoxLayout
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
 from domain.event_status import EVENT_STATUS_NORMAL
 from ui.calendar_styles import (
-    DETAILS_MESSAGE_STYLE,
     DETAILS_PANEL_STYLE,
     details_label_style,
     details_time_style,
@@ -38,8 +37,6 @@ class CalendarDetailsMixin:
         )
         self.event_details_note.installEventFilter(self)
         self.event_details_note.textChanged.connect(self.limit_event_details_note)
-        self.event_details_message.setWordWrap(True)
-        self.event_details_message.setStyleSheet(DETAILS_MESSAGE_STYLE)
         self.event_details_message.hide()
         self.event_details_save_button.clicked.connect(self.save_event_details)
         self.event_details_status.status_changed.connect(self.apply_event_details_status)
@@ -54,7 +51,6 @@ class CalendarDetailsMixin:
         form_layout.addWidget(self.event_details_status)
         form_layout.addWidget(self.detail_caption("Note"))
         form_layout.addWidget(self.event_details_note, 1)
-        form_layout.addWidget(self.event_details_message)
         form_layout.addWidget(self.event_details_save_button)
         self.event_details_form.setLayout(form_layout)
         self.details_view_stack.addWidget(self.event_details_form)
@@ -74,14 +70,9 @@ class CalendarDetailsMixin:
         self.details_view_stack.addWidget(self.month_day_details)
 
     def show_status_message(self, message, duration=3000):
-        self.event_details_message.setText(message)
-        self.event_details_message.show()
-        if duration:
-            QTimer.singleShot(duration, lambda current_message=message: self.clear_status_message(current_message))
+        self.clear_status_message()
 
     def clear_status_message(self, expected_message=None):
-        if expected_message is not None and self.event_details_message.text() != expected_message:
-            return
         self.event_details_message.clear()
         self.event_details_message.hide()
 
