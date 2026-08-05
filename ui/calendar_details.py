@@ -151,6 +151,8 @@ class CalendarDetailsMixin:
             and event.type() == QEvent.KeyPress
             and event.key() in (Qt.Key_Return, Qt.Key_Enter)
         ):
+            if event.modifiers() & Qt.ShiftModifier:
+                return False
             if self.event_details_save_button.isEnabled():
                 self.save_event_details()
             return True

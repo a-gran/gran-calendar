@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from PySide6.QtCore import QPointF, Qt
-from PySide6.QtGui import QKeyEvent, QMouseEvent
+from PySide6.QtGui import QKeyEvent, QMouseEvent, QTextCursor
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
 from domain.event_status import EVENT_STATUS_DONE, EVENT_STATUS_IMPORTANT, EVENT_STATUS_KAIROS
@@ -155,6 +155,26 @@ def test_window_enter_in_event_field_saves_details(qt_app, tmp_path, monkeypatch
     assert event.title == "Saved Title"
 
 
+def test_window_shift_enter_in_event_field_adds_line_break_without_saving(qt_app, tmp_path, monkeypatch, make_event):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
+    event = make_event(event_id="shift-enter-title", title="Old Title", start_at=start_at)
+
+    window.events = [event]
+    window.refresh_calendar()
+    window.select_event(event)
+    window.event_details_title.setText("First line")
+    window.event_details_title.moveCursor(QTextCursor.End)
+
+    qt_app.sendEvent(
+        window.event_details_title,
+        QKeyEvent(QKeyEvent.KeyPress, Qt.Key_Return, Qt.ShiftModifier),
+    )
+
+    assert window.event_details_title.text() == "First line\n"
+    assert event.title == "Old Title"
+
+
 def test_window_enter_in_note_field_saves_details(qt_app, tmp_path, monkeypatch, make_event):
     window = make_window(qt_app, tmp_path, monkeypatch)
     start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
@@ -171,6 +191,27 @@ def test_window_enter_in_note_field_saves_details(qt_app, tmp_path, monkeypatch,
     )
 
     assert event.note == "Saved note"
+
+
+def test_window_shift_enter_in_note_field_adds_line_break_without_saving(qt_app, tmp_path, monkeypatch, make_event):
+    window = make_window(qt_app, tmp_path, monkeypatch)
+    start_at = datetime.combine(window.week_start, datetime.min.time()).replace(hour=8)
+    event = make_event(event_id="shift-enter-note", title="Title", start_at=start_at)
+    event.note = "Old note"
+
+    window.events = [event]
+    window.refresh_calendar()
+    window.select_event(event)
+    window.event_details_note.setPlainText("First line")
+    window.event_details_note.moveCursor(QTextCursor.End)
+
+    qt_app.sendEvent(
+        window.event_details_note,
+        QKeyEvent(QKeyEvent.KeyPress, Qt.Key_Return, Qt.ShiftModifier),
+    )
+
+    assert window.event_details_note.toPlainText() == "First line\n"
+    assert event.note == "Old note"
 
 
 def test_window_clears_event_details(qt_app, tmp_path, monkeypatch, make_event):
