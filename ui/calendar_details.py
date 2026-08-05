@@ -1,4 +1,4 @@
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QEvent, Qt, QTimer
 from PySide6.QtWidgets import QAbstractItemView, QHBoxLayout, QLabel, QVBoxLayout
 
 from domain.event_limits import MAX_EVENT_TITLE_LENGTH
@@ -30,11 +30,13 @@ class CalendarDetailsMixin:
     def setup_event_details_form(self):
         self.event_details_title.setMaxLength(MAX_EVENT_TITLE_LENGTH)
         self.event_details_title.setFixedHeight(58)
+        self.event_details_title.installEventFilter(self)
         self.event_details_title.textChanged.connect(self.limit_event_details_title)
         self.event_details_time.setWordWrap(True)
         self.event_details_time.setStyleSheet(
             details_time_style(self.visual_settings["time_font_size"], self.visual_settings["theme"])
         )
+        self.event_details_note.installEventFilter(self)
         self.event_details_note.textChanged.connect(self.limit_event_details_note)
         self.event_details_message.setWordWrap(True)
         self.event_details_message.setStyleSheet(DETAILS_MESSAGE_STYLE)
@@ -142,3 +144,14 @@ class CalendarDetailsMixin:
         self.event_details_status.setEnabled(is_enabled)
         self.event_details_note.setEnabled(is_enabled)
         self.event_details_save_button.setEnabled(is_enabled)
+
+    def eventFilter(self, watched, event):
+        if (
+            watched in (self.event_details_title, self.event_details_note)
+            and event.type() == QEvent.KeyPress
+            and event.key() in (Qt.Key_Return, Qt.Key_Enter)
+        ):
+            if self.event_details_save_button.isEnabled():
+                self.save_event_details()
+            return True
+        return super().eventFilter(watched, event)
